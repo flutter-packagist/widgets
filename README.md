@@ -1,39 +1,107 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Widgets
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
++ [Example](https://github.com/flutter-packagist/widgets)
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+## WrapperEasyRefresh
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+### Example
 
-## Features
+#### 1. Model
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+``` dart
+class RefreshModel extends BaseModel {
+  final RefreshNotifier<ItemModel> refreshNotifier =
+      RefreshNotifier<ItemModel>();
+}
 
-## Getting started
+class ItemModel {
+  String title;
+  String subTitle;
+  String route;
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+  ItemModel(this.title, this.subTitle, this.route);
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+  factory ItemModel.fromJson(Map<String, dynamic> json) => ItemModel(
+        asString(json, 'title'),
+        asString(json, 'title'),
+        asString(json, 'title'),
+      );
+}
 ```
 
-## Additional information
+#### 2. Controller
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+``` dart
+class RefreshController extends BaseController<RefreshModel> {
+  @override
+  RefreshModel model = RefreshModel();
+
+  @override
+  void onReady() {
+    super.onReady();
+    setupRefresh();
+  }
+}
+
+extension Data on RefreshController {
+  RefreshNotifier get refreshNotifier => model.refreshNotifier;
+}
+
+extension Network on RefreshController {
+  Future<void> setupRefresh() async {
+    refreshNotifier.setup(
+      requestUrl: "list",
+      requestParams: {
+        "limit": "10",
+      },
+      pageSize: 10,
+      jsonParse: (json) =>
+          asList(json, "data").map((e) => ItemModel.fromJson(e)).toList(),
+      onBegin: (loadMore) {},
+      onSuccess: (data, loadMore) {
+        logW(data);
+        update();
+      },
+      onFailed: (code, error, loadMore) {},
+    );
+    await refreshNotifier.refresh();
+  }
+}
+```
+
+#### 3. Page
+
+``` dart
+class RefreshPage extends BasePage<RefreshController, RefreshModel> {
+  const RefreshPage({super.key});
+
+  @override
+  RefreshController putController() => Get.put(RefreshController());
+
+  @override
+  Widget? get appBar => AppBar(
+    title: const Text('下拉刷新和上拉加载更多'),
+  );
+
+  @override
+  Widget get body {
+    logW(controller.refreshNotifier.listSize);
+    return WrapperEasyRefresh(
+      refreshNotifier: controller.refreshNotifier,
+      child: ListView.builder(
+        itemCount: controller.refreshNotifier.listSize,
+        itemBuilder: (context, index) {
+          var itemData = controller.refreshNotifier.listData[index];
+          return ListTile(
+            tileColor: index % 2 == 0 ? Colors.white : Colors.grey[200],
+            title: Text("当前Item序号： ${itemData.title}\n"
+                "当前Item序号： ${itemData.title}\n"
+                "当前Item序号： ${itemData.title}\n"
+                "当前Item序号： ${itemData.title}"),
+          );
+        },
+      ),
+    );
+  }
+}
+```

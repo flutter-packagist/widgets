@@ -10,8 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  easy_refresh: 3.3.2+1
-  dio: 5.3.2
+
+  cached_network_image: 3.2.3   # 网络图片加载
+  easy_refresh: 3.3.2+1         # 下拉刷新，上拉加载
+  dio: 5.3.2                    # 网络请求
   network:
     git:
       url: https://github.com/flutter-packagist/network.git

@@ -44,7 +44,7 @@ class WrapperCachedNetworkImage extends StatefulWidget {
     this.fadeInCurve = Curves.easeIn,
     this.width,
     this.height,
-    this.fit,
+    this.fit = BoxFit.cover,
     this.alignment = Alignment.center,
     this.repeat = ImageRepeat.noRepeat,
     this.matchTextDirection = false,

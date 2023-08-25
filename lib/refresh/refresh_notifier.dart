@@ -89,6 +89,7 @@ class RefreshNotifier<T> {
         page++;
         listData = jsonParse.call(data);
         if (listData.isEmpty) {
+          easyRefreshController.finishRefresh();
           easyRefreshController.finishLoad(IndicatorResult.noMore);
         } else {
           easyRefreshController.finishRefresh();

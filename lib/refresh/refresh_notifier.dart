@@ -30,6 +30,9 @@ class RefreshNotifier<T> {
   /// 请求额外参数
   Options? requestOptions;
 
+  /// 请求取消令牌
+  CancelToken? cancelToken;
+
   /// 当前页
   int page = 1;
 
@@ -47,6 +50,8 @@ class RefreshNotifier<T> {
   Function(int? stateCode, DioException? error, bool loadMore)? onFailed;
   Function(bool loadMore)? onCommon;
 
+  dynamic bind;
+
   int get perPage => pageSize ?? 10;
 
   int get listSize => listData.length;
@@ -57,6 +62,7 @@ class RefreshNotifier<T> {
     required String requestUrl,
     Map<String, dynamic>? requestParams,
     Options? requestOptions,
+    CancelToken? cancelToken,
     required List<T> Function(Map<String, dynamic>) jsonParse,
     int page = 1,
     int? pageSize,
@@ -64,10 +70,12 @@ class RefreshNotifier<T> {
     Function(Map<String, dynamic> data, bool loadMore)? onSuccess,
     Function(int? stateCode, DioException? error, bool loadMore)? onFailed,
     Function(bool loadMore)? onCommon,
+    dynamic bind,
   }) {
     this.requestUrl = requestUrl;
     this.requestParams = requestParams;
     this.requestOptions = requestOptions;
+    this.cancelToken = cancelToken;
     this.jsonParse = jsonParse;
     this.page = page;
     this.pageSize = pageSize;
@@ -75,6 +83,7 @@ class RefreshNotifier<T> {
     this.onSuccess = onSuccess;
     this.onFailed = onFailed;
     this.onCommon = onCommon;
+    this.bind = bind;
   }
 
   /// 刷新
@@ -85,6 +94,7 @@ class RefreshNotifier<T> {
       requestUrl,
       params: commonParams,
       options: requestOptions,
+      cancelToken: cancelToken,
       onSuccess: (data) {
         page++;
         listData = jsonParse.call(data);
@@ -104,6 +114,7 @@ class RefreshNotifier<T> {
       onCommon: () {
         onCommon?.call(false);
       },
+      bind: bind,
     );
   }
 
@@ -114,6 +125,7 @@ class RefreshNotifier<T> {
       requestUrl,
       params: commonParams,
       options: requestOptions,
+      cancelToken: cancelToken,
       onSuccess: (data) {
         page++;
         final newList = jsonParse.call(data);
@@ -130,6 +142,7 @@ class RefreshNotifier<T> {
       onCommon: () {
         onCommon?.call(true);
       },
+      bind: bind,
     );
   }
 

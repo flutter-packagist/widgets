@@ -263,11 +263,10 @@ class BallPulseIndicatorState extends State<BallPulseIndicator> {
     double offset = _offset;
     if (widget.state.indicator.infiniteOffset != null &&
         widget.state.indicator.position == IndicatorPosition.locator &&
-        (_mode != IndicatorMode.inactive ||
-            _result == IndicatorResult.noMore)) {
+        _mode != IndicatorMode.inactive) {
       offset = _actualTriggerOffset;
     }
-    if (_result == IndicatorResult.fail) {
+    if (_result == IndicatorResult.fail || _result == IndicatorResult.noMore) {
       offset = 0;
     }
     return Container(

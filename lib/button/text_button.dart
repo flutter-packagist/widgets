@@ -115,7 +115,7 @@ class WrapperTextButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             icon!,
-            SizedBox(width: gap),
+            SizedBox(height: gap),
             Flexible(child: child)
           ],
         );
@@ -124,7 +124,7 @@ class WrapperTextButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Flexible(child: child),
-            SizedBox(width: gap),
+            SizedBox(height: gap),
             icon!
           ],
         );

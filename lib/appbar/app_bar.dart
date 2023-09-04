@@ -2,6 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class WrapperAppBar extends AppBar {
+  static Widget? _defaultLeading;
+  static Widget? _defaultTitle;
+  static TextStyle? _defaultToolbarTextStyle;
+  static TextStyle? _defaultTitleTextStyle;
+  static double? _defaultToolbarHeight;
+  static SystemUiOverlayStyle? _defaultSystemOverlayStyle;
+
+  static void initConfig({
+    Widget? defaultLeading,
+    Widget? defaultTitle,
+    TextStyle? defaultToolbarTextStyle,
+    TextStyle? defaultTitleTextStyle,
+    double? defaultToolbarHeight,
+    SystemUiOverlayStyle? defaultSystemOverlayStyle,
+  }) {
+    _defaultLeading = defaultLeading;
+    _defaultTitle = defaultTitle;
+    _defaultToolbarTextStyle = defaultToolbarTextStyle;
+    _defaultTitleTextStyle = defaultTitleTextStyle;
+    _defaultToolbarHeight = defaultToolbarHeight;
+    _defaultSystemOverlayStyle = defaultSystemOverlayStyle;
+  }
+
   WrapperAppBar({
     Key? key,
     Widget? leading,
@@ -27,7 +50,6 @@ class WrapperAppBar extends AppBar {
     double? titleSpacing,
     double toolbarOpacity = 1.0,
     double bottomOpacity = 1.0,
-    Size? preferredSize,
     double? toolbarHeight,
     double? leadingWidth,
     TextStyle? toolbarTextStyle,
@@ -38,9 +60,12 @@ class WrapperAppBar extends AppBar {
     String? titleText,
   }) : super(
           key: key,
-          leading: leading,
+          leading:
+              leading ?? (automaticallyImplyLeading ? _defaultLeading : null),
           automaticallyImplyLeading: automaticallyImplyLeading,
-          title: title ?? Text(titleText ?? '', style: titleTextStyle),
+          title: title ??
+              _defaultTitle ??
+              Text(titleText ?? '', style: titleTextStyle),
           actions: actions,
           flexibleSpace: flexibleSpace,
           bottom: bottom,
@@ -60,12 +85,13 @@ class WrapperAppBar extends AppBar {
           titleSpacing: titleSpacing,
           toolbarOpacity: toolbarOpacity,
           bottomOpacity: bottomOpacity,
-          toolbarHeight: toolbarHeight,
+          toolbarHeight: toolbarHeight ?? _defaultToolbarHeight,
           leadingWidth: leadingWidth,
-          toolbarTextStyle: toolbarTextStyle,
+          toolbarTextStyle: toolbarTextStyle ?? _defaultToolbarTextStyle,
           titleTextStyle: titleTextStyle ??
+              _defaultTitleTextStyle ??
               const TextStyle(color: Colors.black, fontSize: 18),
-          systemOverlayStyle: systemOverlayStyle,
+          systemOverlayStyle: systemOverlayStyle ?? _defaultSystemOverlayStyle,
           forceMaterialTransparency: forceMaterialTransparency,
           clipBehavior: clipBehavior,
         );

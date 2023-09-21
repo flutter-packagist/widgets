@@ -90,7 +90,7 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
       placeholder: widget.placeholder ?? placeholder,
       progressIndicatorBuilder:
           widget.progressIndicatorBuilder ?? progressIndicatorBuilder,
-      errorWidget: widget.errorWidget ?? errorWidget,
+      errorWidget: errorWidget,
       fadeOutDuration: widget.fadeOutDuration,
       fadeOutCurve: widget.fadeOutCurve,
       fadeInDuration: widget.fadeInDuration,
@@ -114,20 +114,30 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
     );
   }
 
+  Widget defaultPlaceHolder(BuildContext context, String url) {
+    if (widget.placeholder != null) {
+      return widget.placeholder!(context, url);
+    }
+    return StaticCachedNetworkImage._placeholder != null
+        ? StaticCachedNetworkImage._placeholder!(context, url)
+        : Container(
+            width: widget.width,
+            height: widget.height,
+            color: Colors.grey.shade200,
+          );
+  }
+
   PlaceholderWidgetBuilder? get placeholder {
     if (!widget.usePlaceholder) return null;
-    if (StaticCachedNetworkImage._placeholder != null) {
-      return StaticCachedNetworkImage._placeholder!;
-    }
-    return (context, url) => Container(
-          width: widget.width,
-          height: widget.height,
-          color: Colors.grey.shade200,
-        );
+    return defaultPlaceHolder;
   }
 
   ProgressIndicatorBuilder? get progressIndicatorBuilder {
     if (widget.usePlaceholder) return null;
+    if (widget.imageUrl.isEmpty) {
+      return (context, url, downloadProgress) =>
+          defaultPlaceHolder(context, url);
+    }
     if (StaticCachedNetworkImage._progressIndicatorBuilder != null) {
       return StaticCachedNetworkImage._progressIndicatorBuilder;
     }
@@ -144,6 +154,12 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
   }
 
   LoadingErrorWidgetBuilder get errorWidget {
+    if (widget.imageUrl.isEmpty) {
+      return (context, url, error) => defaultPlaceHolder(context, url);
+    }
+    if (widget.errorWidget != null) {
+      return widget.errorWidget!;
+    }
     if (StaticCachedNetworkImage._errorWidget != null) {
       return (context, url, error) => StaticCachedNetworkImage._errorWidget!(
             context,
@@ -159,7 +175,7 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
             height: widget.height,
             color: Colors.grey.shade200,
             alignment: Alignment.center,
-            child: const Text("点击重新加載"),
+            child: const Text("点击重載"),
           ),
         );
   }

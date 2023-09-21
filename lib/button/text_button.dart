@@ -40,6 +40,7 @@ class WrapperTextButton extends StatelessWidget {
   final double? gap;
   final double? width;
   final double? height;
+  final Size? minimumSize;
 
   const WrapperTextButton({
     super.key,
@@ -80,6 +81,7 @@ class WrapperTextButton extends StatelessWidget {
     this.gap = 4,
     this.width,
     this.height,
+    this.minimumSize,
   }) : assert(child != null || text != null);
 
   @override
@@ -161,6 +163,7 @@ class WrapperTextButton extends StatelessWidget {
             iconColor: resolve<Color?>(iconColor),
             iconSize: resolve<double?>(iconSize),
             alignment: alignment,
+            minimumSize: resolve<Size?>(minimumSize),
           ),
       child: child,
     );

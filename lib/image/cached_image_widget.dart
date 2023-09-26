@@ -99,7 +99,7 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
           placeholderFadeInDuration: widget.placeholderFadeInDuration,
           memCacheWidth: widget.memCacheWidth,
           memCacheHeight: widget.memCacheHeight,
-          cacheKey: widget.cacheKey ?? networkErrorNotifier.value.toString(),
+          cacheKey: widget.cacheKey, // ?? networkErrorNotifier.value.toString(),
           maxWidthDiskCache: widget.maxWidthDiskCache,
           maxHeightDiskCache: widget.maxHeightDiskCache,
         );

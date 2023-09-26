@@ -67,50 +67,43 @@ class WrapperCachedNetworkImage extends StatefulWidget {
 }
 
 class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
-  final WrapperImageController controller = WrapperImageController();
-
-  @override
-  void initState() {
-    super.initState();
-    controller._bind(this);
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  final ValueNotifier<int> networkErrorNotifier = ValueNotifier(0);
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: widget.imageUrl,
-      httpHeaders: widget.httpHeaders,
-      imageBuilder: widget.imageBuilder,
-      placeholder: widget.placeholder ?? placeholder,
-      progressIndicatorBuilder:
-          widget.progressIndicatorBuilder ?? progressIndicatorBuilder,
-      errorWidget: errorWidget,
-      fadeOutDuration: widget.fadeOutDuration,
-      fadeOutCurve: widget.fadeOutCurve,
-      fadeInDuration: widget.fadeInDuration,
-      fadeInCurve: widget.fadeInCurve,
-      width: widget.width,
-      height: widget.height,
-      fit: widget.fit,
-      alignment: widget.alignment,
-      repeat: widget.repeat,
-      matchTextDirection: widget.matchTextDirection,
-      useOldImageOnUrlChange: widget.useOldImageOnUrlChange,
-      color: widget.color,
-      filterQuality: widget.filterQuality,
-      colorBlendMode: widget.colorBlendMode,
-      placeholderFadeInDuration: widget.placeholderFadeInDuration,
-      memCacheWidth: widget.memCacheWidth,
-      memCacheHeight: widget.memCacheHeight,
-      cacheKey: widget.cacheKey,
-      maxWidthDiskCache: widget.maxWidthDiskCache,
-      maxHeightDiskCache: widget.maxHeightDiskCache,
+    return ValueListenableBuilder(
+      valueListenable: networkErrorNotifier,
+      builder: (BuildContext context, value, Widget? child) {
+        return CachedNetworkImage(
+          imageUrl: widget.imageUrl,
+          httpHeaders: widget.httpHeaders,
+          imageBuilder: widget.imageBuilder,
+          placeholder: widget.placeholder ?? placeholder,
+          progressIndicatorBuilder:
+              widget.progressIndicatorBuilder ?? progressIndicatorBuilder,
+          errorWidget: errorWidget,
+          fadeOutDuration: widget.fadeOutDuration,
+          fadeOutCurve: widget.fadeOutCurve,
+          fadeInDuration: widget.fadeInDuration,
+          fadeInCurve: widget.fadeInCurve,
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          alignment: widget.alignment,
+          repeat: widget.repeat,
+          matchTextDirection: widget.matchTextDirection,
+          useOldImageOnUrlChange: widget.useOldImageOnUrlChange,
+          color: widget.color,
+          filterQuality: widget.filterQuality,
+          colorBlendMode: widget.colorBlendMode,
+          placeholderFadeInDuration: widget.placeholderFadeInDuration,
+          memCacheWidth: widget.memCacheWidth,
+          memCacheHeight: widget.memCacheHeight,
+          cacheKey: widget.cacheKey ?? networkErrorNotifier.value.toString(),
+          maxWidthDiskCache: widget.maxWidthDiskCache,
+          maxHeightDiskCache: widget.maxHeightDiskCache,
+        );
+      },
     );
   }
 
@@ -165,11 +158,13 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
             context,
             widget.imageUrl,
             error,
-            controller,
+            networkErrorNotifier,
           );
     }
     return (context, url, error) => GestureDetector(
-          onTap: () => controller.refresh(),
+          onTap: () {
+            networkErrorNotifier.value++;
+          },
           child: Container(
             width: widget.width,
             height: widget.height,
@@ -181,29 +176,11 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
   }
 }
 
-class WrapperImageController {
-  _WrapperCachedNetworkImageState? _state;
-
-  void _bind(_WrapperCachedNetworkImageState state) {
-    _state = state;
-  }
-
-  void refresh() {
-    // ignore: invalid_use_of_protected_member
-    _state?.setState(() {});
-  }
-
-  /// Unbind.
-  void dispose() {
-    _state = null;
-  }
-}
-
 typedef WrapperLoadingErrorWidgetBuilder = Widget Function(
   BuildContext context,
   String url,
   dynamic error,
-  WrapperImageController controller,
+  ValueNotifier<int> networkErrorNotifier,
 );
 
 class StaticCachedNetworkImage {

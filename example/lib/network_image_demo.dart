@@ -12,17 +12,7 @@ class _NetworkImageDemoState extends State<NetworkImageDemo> {
   @override
   void initState() {
     super.initState();
-    StaticCachedNetworkImage.init(
-      placeholder: (context, url) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      errorWidget: (context, url, error, controller) {
-        return IconButton(
-          onPressed: () => controller.refresh(),
-          icon: const Icon(Icons.error),
-        );
-      },
-    );
+    StaticCachedNetworkImage.init();
   }
 
   @override
@@ -38,7 +28,7 @@ class _NetworkImageDemoState extends State<NetworkImageDemo> {
           WrapperCachedNetworkImage(
             width: 200,
             height: 200,
-            imageUrl: "https://picsum.photos/250?image=122222",
+            imageUrl: "https://fastly.picsum.photos/id/741/200/306.jpg?hmac=MsmqX1XqL3Anc0CszL7Y1aDRCXGOV7WYE1Iw718IClU",
           ),
         ],
       ),

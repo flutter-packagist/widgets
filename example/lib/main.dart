@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'easy_refresh_demo.dart';
 import 'network_image_demo.dart';
 import 'text_button_demo.dart';
+import 'text_field_demo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
 Map<String, Widget> routes = {
   "网络图片加载": const NetworkImageDemo(),
   "TextButton": const TextButtonDemo(),
+  "TextField": const TextFieldDemo(),
+  "EasyRefresh": const EasyRefreshDemo(),
 };
 
 class DemoPage extends StatelessWidget {

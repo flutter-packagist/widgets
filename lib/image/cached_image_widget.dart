@@ -67,7 +67,13 @@ class WrapperCachedNetworkImage extends StatefulWidget {
 }
 
 class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
-  final ValueNotifier<int> networkErrorNotifier = ValueNotifier(0);
+  late final ValueNotifier<String> networkErrorNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    networkErrorNotifier = ValueNotifier(widget.imageUrl);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +105,7 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
           placeholderFadeInDuration: widget.placeholderFadeInDuration,
           memCacheWidth: widget.memCacheWidth,
           memCacheHeight: widget.memCacheHeight,
-          cacheKey: widget.cacheKey, // ?? networkErrorNotifier.value.toString(),
+          cacheKey: widget.cacheKey ?? networkErrorNotifier.value,
           maxWidthDiskCache: widget.maxWidthDiskCache,
           maxHeightDiskCache: widget.maxHeightDiskCache,
         );
@@ -163,7 +169,8 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
     }
     return (context, url, error) => GestureDetector(
           onTap: () {
-            networkErrorNotifier.value++;
+            networkErrorNotifier.value =
+                "${widget.imageUrl}?${DateTime.now().millisecondsSinceEpoch}";
           },
           child: Container(
             width: widget.width,
@@ -180,7 +187,7 @@ typedef WrapperLoadingErrorWidgetBuilder = Widget Function(
   BuildContext context,
   String url,
   dynamic error,
-  ValueNotifier<int> networkErrorNotifier,
+  ValueNotifier<String> networkErrorNotifier,
 );
 
 class StaticCachedNetworkImage {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:widgets/button/text_button.dart';
+import 'package:widgets/widgets.dart';
 
 class TextButtonDemo extends StatefulWidget {
   const TextButtonDemo({super.key});
@@ -12,9 +12,9 @@ class _TextButtonDemoState extends State<TextButtonDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("网络图片加载"),
-        elevation: 1,
+      appBar: WrapperAppBar(
+        titleText: "TextButtonDemo",
+        backgroundColor: Colors.white,
       ),
       body: Center(
         child: Column(

@@ -137,12 +137,20 @@ class WrapperTextField extends StatelessWidget {
     BorderSide? borderSide,
     BorderRadius? borderRadius,
     double? gapPadding,
+    Widget? prefixWidget,
+    Widget? suffixWidget,
+    BoxConstraints? prefixWidgetConstraints,
+    BoxConstraints? suffixWidgetConstraints,
   }) : decoration = defaultDecoration(
           inputBorderType,
           decorationOutline,
           borderSide: borderSide,
           borderRadius: borderRadius,
           gapPadding: gapPadding,
+          prefixWidget: prefixWidget,
+          suffixWidget: suffixWidget,
+          prefixWidgetConstraints: prefixWidgetConstraints,
+          suffixWidgetConstraints: suffixWidgetConstraints,
         );
 
   WrapperTextField.underline({
@@ -209,11 +217,19 @@ class WrapperTextField extends StatelessWidget {
     InputDecoration? decorationUnderline,
     BorderSide? borderSide,
     BorderRadius? borderRadius,
+    Widget? prefixWidget,
+    Widget? suffixWidget,
+    BoxConstraints? prefixWidgetConstraints,
+    BoxConstraints? suffixWidgetConstraints,
   }) : decoration = defaultDecoration(
           inputBorderType,
           decorationUnderline,
           borderSide: borderSide,
           borderRadius: borderRadius,
+          prefixWidget: prefixWidget,
+          suffixWidget: suffixWidget,
+          prefixWidgetConstraints: prefixWidgetConstraints,
+          suffixWidgetConstraints: suffixWidgetConstraints,
         );
 
   WrapperTextField.none({
@@ -278,9 +294,17 @@ class WrapperTextField extends StatelessWidget {
     this.magnifierConfiguration,
     this.inputBorderType = InputBorderType.none,
     InputDecoration? decorationNone,
+    Widget? prefixWidget,
+    Widget? suffixWidget,
+    BoxConstraints? prefixWidgetConstraints,
+    BoxConstraints? suffixWidgetConstraints,
   }) : decoration = defaultDecoration(
           inputBorderType,
           decorationNone,
+          prefixWidget: prefixWidget,
+          suffixWidget: suffixWidget,
+          prefixWidgetConstraints: prefixWidgetConstraints,
+          suffixWidgetConstraints: suffixWidgetConstraints,
         );
 
   static InputDecoration defaultDecoration(
@@ -289,8 +313,13 @@ class WrapperTextField extends StatelessWidget {
     BorderSide? borderSide,
     BorderRadius? borderRadius,
     double? gapPadding = 0,
+    Widget? prefixWidget,
+    Widget? suffixWidget,
+    BoxConstraints? prefixWidgetConstraints,
+    BoxConstraints? suffixWidgetConstraints,
   }) {
     InputBorder? inputBorder;
+    EdgeInsetsGeometry? contentPadding;
     if (inputBorderType == InputBorderType.outline) {
       inputBorder = OutlineInputBorder(
         borderSide: borderSide ?? const BorderSide(),
@@ -309,6 +338,7 @@ class WrapperTextField extends StatelessWidget {
       );
     } else if (inputBorderType == InputBorderType.none) {
       inputBorder = InputBorder.none;
+      contentPadding = EdgeInsets.zero;
     }
     return InputDecoration(
       icon: decoration?.icon,
@@ -316,12 +346,15 @@ class WrapperTextField extends StatelessWidget {
       label: decoration?.label,
       labelText: decoration?.labelText,
       labelStyle: decoration?.labelStyle,
+      floatingLabelStyle: decoration?.floatingLabelStyle,
       helperText: decoration?.helperText,
       helperStyle: decoration?.helperStyle,
       helperMaxLines: decoration?.helperMaxLines,
       hintText: decoration?.hintText,
       hintStyle: decoration?.hintStyle,
+      hintTextDirection: decoration?.hintTextDirection,
       hintMaxLines: decoration?.hintMaxLines,
+      error: decoration?.error,
       errorText: decoration?.errorText,
       errorStyle: decoration?.errorStyle,
       errorMaxLines: decoration?.errorMaxLines,
@@ -329,19 +362,23 @@ class WrapperTextField extends StatelessWidget {
       floatingLabelAlignment: decoration?.floatingLabelAlignment,
       isCollapsed: decoration?.isCollapsed ?? false,
       isDense: decoration?.isDense ?? true,
-      contentPadding: decoration?.contentPadding,
-      prefixIcon: decoration?.prefixIcon,
-      prefixIconConstraints: decoration?.prefixIconConstraints,
+      contentPadding: decoration?.contentPadding ?? contentPadding,
+      prefixIcon: decoration?.prefixIcon ?? prefixWidget,
+      prefixIconConstraints: decoration?.prefixIconConstraints ??
+          prefixWidgetConstraints ??
+          const BoxConstraints(minHeight: 0),
       prefix: decoration?.prefix,
       prefixText: decoration?.prefixText,
       prefixStyle: decoration?.prefixStyle,
       prefixIconColor: decoration?.prefixIconColor,
-      suffixIcon: decoration?.suffixIcon,
+      suffixIcon: decoration?.suffixIcon ?? suffixWidget,
       suffix: decoration?.suffix,
       suffixText: decoration?.suffixText,
       suffixStyle: decoration?.suffixStyle,
       suffixIconColor: decoration?.suffixIconColor,
-      suffixIconConstraints: decoration?.suffixIconConstraints,
+      suffixIconConstraints: decoration?.suffixIconConstraints ??
+          suffixWidgetConstraints ??
+          const BoxConstraints(minHeight: 0),
       counter: decoration?.counter,
       counterText: decoration?.counterText,
       counterStyle: decoration?.counterStyle,

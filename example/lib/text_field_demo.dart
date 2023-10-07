@@ -17,6 +17,23 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
   final ValueNotifier<int> code1Notifier = ValueNotifier<int>(0);
   final ValueNotifier<int> code2Notifier = ValueNotifier<int>(0);
   final ValueNotifier<String> errorNotifier = ValueNotifier<String>("");
+  final ValueNotifier<String> counterNotifier = ValueNotifier<String>("0/100");
+
+  final FocusNode focusNode = FocusNode();
+  final TextEditingController errorEditingController = TextEditingController();
+  final TextEditingController counterEditingController =
+      TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    focusNode.addListener(() {
+      if (!focusNode.hasFocus) {
+        errorNotifier.value =
+            errorEditingController.text.isEmpty ? "内容不能为空" : "";
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +48,12 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             textFieldOutline,
             textFieldUnderline,
             textFieldNone,
+            textFieldSearch,
             textFieldPhone,
             textFieldPhoneCupertino,
             textFieldPassword,
             textFieldError,
+            textFieldCounter,
           ],
         ),
       ),
@@ -65,6 +84,40 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
     );
   }
 
+  Widget get textFieldSearch {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: WrapperTextField.outline(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: const BorderSide(
+          style: BorderStyle.none,
+        ),
+        prefixWidget: const Icon(
+          Icons.search,
+          color: Colors.grey,
+          size: 14,
+        ),
+        prefixWidgetConstraints: const BoxConstraints(
+          minWidth: 30,
+          minHeight: 0,
+        ),
+        decorationOutline: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 5,
+          ),
+          filled: true,
+          fillColor: Colors.grey.shade200,
+          hintText: "搜索",
+          hintStyle: TextStyle(
+            color: Colors.grey.shade500,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget get textFieldPhone {
     return Container(
       color: Colors.purple.shade100,
@@ -77,63 +130,63 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             fontSize: 16,
           ),
           borderRadius: BorderRadius.circular(5),
-          decorationOutline: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
+          prefixWidgetConstraints: const BoxConstraints(
+            minWidth: 48,
+            minHeight: 0,
+          ),
+          prefixWidget: const Icon(
+            Icons.admin_panel_settings,
+            color: Colors.black,
+            size: 24,
+          ),
+          suffixWidget: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 1,
+                height: 18,
+                color: Colors.grey,
+              ),
+              ValueListenableBuilder(
+                valueListenable: code1Notifier,
+                builder: (context, value, Widget? child) {
+                  return WrapperTextButton(
+                    width: 86,
+                    text: code1Notifier.value <= 0
+                        ? "发送"
+                        : "${code1Notifier.value} S",
+                    onPressed: () {
+                      if (code1Notifier.value <= 0) {
+                        code1Notifier.value = 60;
+                        Timer.periodic(
+                          const Duration(seconds: 1),
+                          (timer) {
+                            if (code1Notifier.value-- <= 0) {
+                              timer.cancel();
+                            }
+                          },
+                        );
+                      }
+                    },
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 1),
+            ],
+          ),
+          decorationOutline: const InputDecoration(
+            contentPadding: EdgeInsets.symmetric(
               horizontal: 10,
               vertical: 13,
             ),
             hintText: "请输入行动电话",
-            hintStyle: const TextStyle(
+            hintStyle: TextStyle(
               color: Colors.grey,
               fontSize: 16,
-            ),
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: 48,
-              minHeight: 0,
-            ),
-            prefixIcon: const Icon(
-              Icons.admin_panel_settings,
-              color: Colors.black,
-              size: 24,
-            ),
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 1,
-                  height: 18,
-                  color: Colors.grey,
-                ),
-                ValueListenableBuilder(
-                  valueListenable: code1Notifier,
-                  builder: (context, value, Widget? child) {
-                    return WrapperTextButton(
-                      width: 86,
-                      text: code1Notifier.value <= 0
-                          ? "发送"
-                          : "${code1Notifier.value} S",
-                      onPressed: () {
-                        if (code1Notifier.value <= 0) {
-                          code1Notifier.value = 60;
-                          Timer.periodic(
-                            const Duration(seconds: 1),
-                            (timer) {
-                              if (code1Notifier.value-- <= 0) {
-                                timer.cancel();
-                              }
-                            },
-                          );
-                        }
-                      },
-                      textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 1),
-              ],
             ),
           ),
         ),
@@ -234,41 +287,41 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                 LengthLimitingTextInputFormatter(12),
               ],
               obscureText: passwordNotifier.value,
-              decorationOutline: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
+              prefixWidgetConstraints: const BoxConstraints(
+                minWidth: 48,
+                minHeight: 0,
+              ),
+              prefixWidget: const Icon(
+                Icons.lock,
+                color: Colors.black,
+                size: 24,
+              ),
+              suffixWidgetConstraints: const BoxConstraints(
+                minWidth: 66,
+                minHeight: 0,
+              ),
+              suffixWidget: IconButton(
+                highlightColor: Colors.transparent,
+                onPressed: () {
+                  passwordNotifier.value = !passwordNotifier.value;
+                },
+                icon: Icon(
+                  passwordNotifier.value
+                      ? Icons.remove_red_eye
+                      : Icons.remove_red_eye_outlined,
+                  color: Colors.black,
+                  size: 24,
+                ),
+              ),
+              decorationOutline: const InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 13,
                 ),
                 hintText: "请输入密码",
-                hintStyle: const TextStyle(
+                hintStyle: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
-                ),
-                prefixIconConstraints: const BoxConstraints(
-                  minWidth: 48,
-                  minHeight: 0,
-                ),
-                prefixIcon: const Icon(
-                  Icons.lock,
-                  color: Colors.black,
-                  size: 24,
-                ),
-                suffixIconConstraints: const BoxConstraints(
-                  minWidth: 66,
-                  minHeight: 0,
-                ),
-                suffixIcon: IconButton(
-                  highlightColor: Colors.transparent,
-                  onPressed: () {
-                    passwordNotifier.value = !passwordNotifier.value;
-                  },
-                  icon: Icon(
-                    passwordNotifier.value
-                        ? Icons.remove_red_eye
-                        : Icons.remove_red_eye_outlined,
-                    color: Colors.black,
-                    size: 24,
-                  ),
                 ),
               ),
             );
@@ -286,44 +339,34 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
         valueListenable: errorNotifier,
         builder: (BuildContext context, value, Widget? child) {
           return WrapperTextField.none(
+            focusNode: focusNode,
+            controller: errorEditingController,
             textAlign: TextAlign.right,
             style: const TextStyle(
               color: Colors.black,
               fontSize: 16,
             ),
-            decorationNone: InputDecoration(
-              contentPadding: EdgeInsets.zero,
-              hintText: "请输入",
-              hintStyle: const TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
-              ),
-              prefixIconConstraints: const BoxConstraints(
-                minHeight: 0,
-              ),
-              prefixIcon: RichText(
-                text: const TextSpan(
-                  text: "裝修總預算",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: "*",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
+            prefixWidget: RichText(
+              text: const TextSpan(
+                text: "裝修總預算",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
                 ),
+                children: [
+                  TextSpan(
+                    text: "*",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
-              suffixIconConstraints: const BoxConstraints(
-                minWidth: 26,
-                minHeight: 0,
-              ),
-              suffixIcon: const Text(
+            ),
+            suffixWidget: const SizedBox(
+              width: 30,
+              child: Text(
                 "萬",
                 style: TextStyle(
                   color: Colors.black,
@@ -331,22 +374,82 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                 ),
                 textAlign: TextAlign.right,
               ),
-              // errorText: "總預算不能為空",
-              // errorStyle: const TextStyle(
-              //   color: Colors.red,
-              //   fontSize: 13,
-              // ),
-              error: const Text(
-                "總預算不能為空",
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 13,
-                ),
-                // textAlign: TextAlign.right,
+            ),
+            onEditingComplete: () {
+              errorNotifier.value =
+                  errorEditingController.text.isEmpty ? "内容不能为空" : "";
+            },
+            decorationNone: InputDecoration(
+              hintText: "请输入",
+              hintStyle: const TextStyle(
+                color: Colors.grey,
+                fontSize: 16,
               ),
+              error: errorNotifier.value.isEmpty
+                  ? null
+                  : SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        errorNotifier.value,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 13,
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget get textFieldCounter {
+    return Container(
+      color: Colors.purple.shade100,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "特殊要求",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 10),
+          ValueListenableBuilder(
+            valueListenable: counterNotifier,
+            builder: (BuildContext context, value, Widget? child) {
+              return WrapperTextField.none(
+                controller: counterEditingController,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                ),
+                maxLines: 4,
+                maxLength: 100,
+                decorationNone: InputDecoration(
+                  hintText: "请输入特殊要求",
+                  hintStyle: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                  counterText: counterNotifier.value,
+                  counterStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                  ),
+                ),
+                onChanged: (value) {
+                  counterNotifier.value = "${value.length}/100";
+                },
+              );
+            },
+          ),
+        ],
       ),
     );
   }

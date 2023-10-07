@@ -13,3 +13,4 @@ export 'indicator/tab_indicator.dart';
 export 'refresh/ball/ball_pulse_indicator.dart';
 export 'refresh/refresh.dart';
 export 'refresh/refresh_notifier.dart';
+export 'tabbar/tab_bar_scale.dart';

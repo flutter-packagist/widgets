@@ -61,97 +61,338 @@ class _TabBarDemoState extends State<TabBarDemo> with TickerProviderStateMixin {
         tabBarWrapper,
         tabBar,
         tabBarAnimation,
+        tabBarIndicator,
+        tabBarIndicator2,
+        tabBarIndicator3,
+        tabBarIndicator4,
+        tabBarIndicator5,
+        tabBarIndicator6,
+        tabBarIndicator7,
         Expanded(child: tabView),
       ]),
     );
   }
 
   Widget get tabBarWrapperScale {
-    return WrapperTabBar.textScale(
-      isScrollable: true,
-      controller: tabController,
-      labelStyle: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade50,
+      child: WrapperTabBar.textScale(
+        isScrollable: true,
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
       ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-      ),
-      tabs: tabs.map((e) => Tab(text: e)).toList(),
     );
   }
 
   Widget get tabBarWrapper {
-    return WrapperTabBar(
-      isScrollable: true,
-      controller: tabController,
-      labelStyle: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade100,
+      child: WrapperTabBar(
+        isScrollable: true,
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
       ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-      ),
-      tabs: tabs.map((e) => Tab(text: e)).toList(),
     );
   }
 
   Widget get tabBar {
-    return TabBar(
-      isScrollable: true,
-      controller: tabController,
-      labelStyle: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade200,
+      child: TabBar(
+        isScrollable: true,
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
       ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-      ),
-      tabs: tabs.map((e) => Tab(text: e)).toList(),
     );
   }
 
   Widget get tabBarAnimation {
-    return TabBar(
-      controller: tabController,
-      labelStyle: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-      ),
-      tabs: tabs
-          .asMap()
-          .map(
-            (index, e) => MapEntry(
-              index,
-              AnimatedBuilder(
-                animation: animationControllers[index],
-                builder: (context, child) {
-                  final child = Tab(
-                    text: 'tab $index',
-                  );
-                  final value = animationControllers[index].value;
-                  if (animationControllers[index].status ==
-                      AnimationStatus.forward) {
-                    final angle = sin(4 * pi * value) * pi * 0.3;
-                    return Transform.rotate(angle: angle, child: child);
-                  } else {
-                    final dy = sin(2 * pi * value) * 0.2;
-                    return FractionalTranslation(
-                        translation: Offset(0, dy), child: child);
-                  }
-                },
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade300,
+      child: TabBar(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        tabs: tabs
+            .asMap()
+            .map(
+              (index, e) => MapEntry(
+                index,
+                AnimatedBuilder(
+                  animation: animationControllers[index],
+                  builder: (context, child) {
+                    final child = Tab(
+                      text: 'tab $index',
+                    );
+                    final value = animationControllers[index].value;
+                    if (animationControllers[index].status ==
+                        AnimationStatus.forward) {
+                      final angle = sin(4 * pi * value) * pi * 0.3;
+                      return Transform.rotate(angle: angle, child: child);
+                    } else {
+                      final dy = sin(2 * pi * value) * 0.2;
+                      return FractionalTranslation(
+                          translation: Offset(0, dy), child: child);
+                    }
+                  },
+                ),
               ),
-            ),
-          )
-          .values
-          .toList(),
+            )
+            .values
+            .toList(),
+      ),
+    );
+  }
+
+  Widget get tabBarIndicator {
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade50,
+      child: WrapperTabBar.textScale(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        labelColor: Colors.black,
+        unselectedLabelColor: Colors.black,
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicator: const TabIndicator(
+          width: 50,
+          height: 3,
+          color: Colors.black,
+          relativeOffsetY: 6,
+        ),
+      ),
+    );
+  }
+
+  Widget get tabBarIndicator2 {
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade100,
+      child: WrapperTabBar.textScale(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.black,
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: const TabIndicator(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget get tabBarIndicator3 {
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade200,
+      child: WrapperTabBar.textScale(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        labelColor: Colors.black,
+        unselectedLabelColor: Colors.black,
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicator: const TabIndicator(
+          width: 4,
+          height: 4,
+          color: Colors.black,
+          relativeOffsetY: 6,
+        ),
+      ),
+    );
+  }
+
+  Widget get tabBarIndicator4 {
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade50,
+      child: WrapperTabBar.textScale(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.black,
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: TabIndicator(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(80),
+        ),
+      ),
+    );
+  }
+
+  Widget get tabBarIndicator5 {
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade200,
+      child: WrapperTabBar.textScale(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        labelColor: Colors.black,
+        unselectedLabelColor: Colors.black,
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorColor: Colors.black,
+      ),
+    );
+  }
+
+  Widget get tabBarIndicator6 {
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade100,
+      child: WrapperTabBar.textScale(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        labelColor: Colors.black,
+        unselectedLabelColor: Colors.black,
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: TabIndicator(
+          width: 60,
+          height: 14,
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(2),
+          relativeOffsetY: 10,
+        ),
+      ),
+    );
+  }
+
+  Widget get tabBarIndicator7 {
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade50,
+      child: WrapperTabBar.textScale(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.black,
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: TabIndicator(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black,
+          onRadiusChanged: (offsetIndex) {
+            if (offsetIndex.toInt() == 0) {
+              return BorderRadius.horizontal(
+                left: Radius.lerp(
+                      const Radius.circular(40),
+                      const Radius.circular(0),
+                      offsetIndex,
+                    ) ??
+                    Radius.zero,
+              );
+            } else if (offsetIndex.toInt() == 1) {
+              return BorderRadius.horizontal(
+                right: Radius.lerp(
+                      const Radius.circular(0),
+                      const Radius.circular(40),
+                      offsetIndex - 1,
+                    ) ??
+                    Radius.zero,
+              );
+            } else {
+              return BorderRadius.horizontal(
+                right: Radius.lerp(
+                      const Radius.circular(40),
+                      const Radius.circular(40),
+                      offsetIndex - 2,
+                    ) ??
+                    Radius.zero,
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 

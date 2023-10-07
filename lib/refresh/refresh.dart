@@ -7,7 +7,21 @@ import 'ball/footer/ball_pulse_footer.dart';
 import 'ball/header/ball_pulse_header.dart';
 import 'refresh_notifier.dart';
 
+typedef EasyRefreshIndicator = Indicator? Function(
+    bool clamping, Color? backgroundColor);
+
 class WrapperEasyRefresh extends EasyRefresh {
+  static EasyRefreshIndicator? _header;
+  static EasyRefreshIndicator? _footer;
+
+  static void init({
+    EasyRefreshIndicator? header,
+    EasyRefreshIndicator? footer,
+  }) {
+    _header = header;
+    _footer = footer;
+  }
+
   WrapperEasyRefresh({
     Key? key,
     required Widget? child,
@@ -40,37 +54,41 @@ class WrapperEasyRefresh extends EasyRefresh {
     Color? footerBackgroundColor,
     RefreshNotifier? refreshNotifier,
   }) : super(
-    key: key,
-    child: child,
-    controller: controller ?? refreshNotifier?.easyRefreshController,
-    header: BallPulseHeader(
-      clamping: headerClamping,
-      backgroundColor: headerBackgroundColor,
-    ),
-    footer: BallPulseFooter(
-      clamping: footerClamping,
-      backgroundColor: footerBackgroundColor,
-    ),
-    notRefreshHeader: notRefreshHeader,
-    notLoadFooter: notLoadFooter,
-    onRefresh: onRefresh ?? refreshNotifier?.refresh,
-    onLoad: onLoad ?? refreshNotifier?.loadMore,
-    spring: spring,
-    frictionFactor: frictionFactor,
-    simultaneously: simultaneously,
-    canRefreshAfterNoMore: canRefreshAfterNoMore,
-    canLoadAfterNoMore: canLoadAfterNoMore,
-    resetAfterRefresh: resetAfterRefresh,
-    refreshOnStart: refreshOnStart,
-    refreshOnStartHeader: refreshOnStartHeader,
-    callRefreshOverOffset: callRefreshOverOffset,
-    callLoadOverOffset: callLoadOverOffset,
-    fit: fit,
-    clipBehavior: clipBehavior,
-    scrollBehaviorBuilder: scrollBehaviorBuilder,
-    scrollController: scrollController,
-    triggerAxis: triggerAxis,
-  );
+          key: key,
+          child: child,
+          controller: controller ?? refreshNotifier?.easyRefreshController,
+          header:
+              _header?.call(headerClamping, headerBackgroundColor) as Header? ??
+                  BallPulseHeader(
+                    clamping: headerClamping,
+                    backgroundColor: headerBackgroundColor,
+                  ),
+          footer:
+              _footer?.call(footerClamping, footerBackgroundColor) as Footer? ??
+                  BallPulseFooter(
+                    clamping: footerClamping,
+                    backgroundColor: footerBackgroundColor,
+                  ),
+          notRefreshHeader: notRefreshHeader,
+          notLoadFooter: notLoadFooter,
+          onRefresh: onRefresh ?? refreshNotifier?.refresh,
+          onLoad: onLoad ?? refreshNotifier?.loadMore,
+          spring: spring,
+          frictionFactor: frictionFactor,
+          simultaneously: simultaneously,
+          canRefreshAfterNoMore: canRefreshAfterNoMore,
+          canLoadAfterNoMore: canLoadAfterNoMore,
+          resetAfterRefresh: resetAfterRefresh,
+          refreshOnStart: refreshOnStart,
+          refreshOnStartHeader: refreshOnStartHeader,
+          callRefreshOverOffset: callRefreshOverOffset,
+          callLoadOverOffset: callLoadOverOffset,
+          fit: fit,
+          clipBehavior: clipBehavior,
+          scrollBehaviorBuilder: scrollBehaviorBuilder,
+          scrollController: scrollController,
+          triggerAxis: triggerAxis,
+        );
 
   WrapperEasyRefresh.builder({
     Key? key,
@@ -103,33 +121,37 @@ class WrapperEasyRefresh extends EasyRefresh {
     Color? footerBackgroundColor,
     RefreshNotifier? refreshNotifier,
   }) : super.builder(
-    key: key,
-    childBuilder: childBuilder,
-    controller: controller ?? refreshNotifier?.easyRefreshController,
-    header: BallPulseHeader(
-      clamping: headerClamping,
-      backgroundColor: headerBackgroundColor,
-    ),
-    footer: BallPulseFooter(
-      clamping: footerClamping,
-      backgroundColor: footerBackgroundColor,
-    ),
-    onRefresh: onRefresh ?? refreshNotifier?.refresh,
-    onLoad: onLoad ?? refreshNotifier?.loadMore,
-    spring: spring,
-    frictionFactor: frictionFactor,
-    simultaneously: simultaneously,
-    canRefreshAfterNoMore: canRefreshAfterNoMore,
-    canLoadAfterNoMore: canLoadAfterNoMore,
-    resetAfterRefresh: resetAfterRefresh,
-    refreshOnStart: refreshOnStart,
-    refreshOnStartHeader: refreshOnStartHeader,
-    callRefreshOverOffset: callRefreshOverOffset,
-    callLoadOverOffset: callLoadOverOffset,
-    fit: fit,
-    clipBehavior: clipBehavior,
-    scrollBehaviorBuilder: scrollBehaviorBuilder,
-    scrollController: scrollController,
-    triggerAxis: triggerAxis,
-  );
+          key: key,
+          childBuilder: childBuilder,
+          controller: controller ?? refreshNotifier?.easyRefreshController,
+          header:
+              _header?.call(headerClamping, headerBackgroundColor) as Header? ??
+                  BallPulseHeader(
+                    clamping: headerClamping,
+                    backgroundColor: headerBackgroundColor,
+                  ),
+          footer:
+              _footer?.call(footerClamping, footerBackgroundColor) as Footer? ??
+                  BallPulseFooter(
+                    clamping: footerClamping,
+                    backgroundColor: footerBackgroundColor,
+                  ),
+          onRefresh: onRefresh ?? refreshNotifier?.refresh,
+          onLoad: onLoad ?? refreshNotifier?.loadMore,
+          spring: spring,
+          frictionFactor: frictionFactor,
+          simultaneously: simultaneously,
+          canRefreshAfterNoMore: canRefreshAfterNoMore,
+          canLoadAfterNoMore: canLoadAfterNoMore,
+          resetAfterRefresh: resetAfterRefresh,
+          refreshOnStart: refreshOnStart,
+          refreshOnStartHeader: refreshOnStartHeader,
+          callRefreshOverOffset: callRefreshOverOffset,
+          callLoadOverOffset: callLoadOverOffset,
+          fit: fit,
+          clipBehavior: clipBehavior,
+          scrollBehaviorBuilder: scrollBehaviorBuilder,
+          scrollController: scrollController,
+          triggerAxis: triggerAxis,
+        );
 }

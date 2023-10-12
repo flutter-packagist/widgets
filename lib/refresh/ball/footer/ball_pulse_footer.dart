@@ -26,7 +26,7 @@ class BallPulseFooter extends Footer {
     bool springRebound = true,
     FrictionFactor? frictionFactor,
     bool safeArea = true,
-    double? infiniteOffset,
+    double? infiniteOffset = 70,
     bool? hitOver,
     bool? infiniteHitOver,
     bool hapticFeedback = false,

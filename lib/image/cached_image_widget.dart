@@ -76,6 +76,16 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
   }
 
   @override
+  void didUpdateWidget(covariant WrapperCachedNetworkImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print("widget.imageUrl: ${widget.imageUrl}");
+    print("oldWidget.imageUrl: ${oldWidget.imageUrl}");
+    if (widget.imageUrl != oldWidget.imageUrl) {
+      networkErrorNotifier.value = widget.imageUrl;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: networkErrorNotifier,

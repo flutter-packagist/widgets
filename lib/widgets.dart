@@ -1,4 +1,3 @@
-export 'package:dio/dio.dart';
 export 'package:easy_refresh/easy_refresh.dart';
 export 'package:network/network.dart';
 

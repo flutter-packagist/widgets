@@ -57,18 +57,18 @@ class WrapperEasyRefresh extends EasyRefresh {
           key: key,
           child: child,
           controller: controller ?? refreshNotifier?.easyRefreshController,
-          header:
+          header: header ??
               _header?.call(headerClamping, headerBackgroundColor) as Header? ??
-                  BallPulseHeader(
-                    clamping: headerClamping,
-                    backgroundColor: headerBackgroundColor,
-                  ),
-          footer:
+              BallPulseHeader(
+                clamping: headerClamping,
+                backgroundColor: headerBackgroundColor,
+              ),
+          footer: footer ??
               _footer?.call(footerClamping, footerBackgroundColor) as Footer? ??
-                  BallPulseFooter(
-                    clamping: footerClamping,
-                    backgroundColor: footerBackgroundColor,
-                  ),
+              BallPulseFooter(
+                clamping: footerClamping,
+                backgroundColor: footerBackgroundColor,
+              ),
           notRefreshHeader: notRefreshHeader,
           notLoadFooter: notLoadFooter,
           onRefresh: onRefresh ?? refreshNotifier?.refresh,
@@ -124,18 +124,18 @@ class WrapperEasyRefresh extends EasyRefresh {
           key: key,
           childBuilder: childBuilder,
           controller: controller ?? refreshNotifier?.easyRefreshController,
-          header:
+          header: header ??
               _header?.call(headerClamping, headerBackgroundColor) as Header? ??
-                  BallPulseHeader(
-                    clamping: headerClamping,
-                    backgroundColor: headerBackgroundColor,
-                  ),
-          footer:
+              BallPulseHeader(
+                clamping: headerClamping,
+                backgroundColor: headerBackgroundColor,
+              ),
+          footer: footer ??
               _footer?.call(footerClamping, footerBackgroundColor) as Footer? ??
-                  BallPulseFooter(
-                    clamping: footerClamping,
-                    backgroundColor: footerBackgroundColor,
-                  ),
+              BallPulseFooter(
+                clamping: footerClamping,
+                backgroundColor: footerBackgroundColor,
+              ),
           onRefresh: onRefresh ?? refreshNotifier?.refresh,
           onLoad: onLoad ?? refreshNotifier?.loadMore,
           spring: spring,

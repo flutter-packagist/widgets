@@ -1,3 +1,7 @@
+## 1.1.1
+
+* fixed: 修复WrapperEasyRefresh的header和footer属性不生效问题
+
 ## 1.1.0
 
 * feat: easy_refresh提供设置默认下拉刷新 头部 和 尾部 的方法

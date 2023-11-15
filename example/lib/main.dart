@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'easy_refresh_demo.dart';
 import 'network_image_demo.dart';
+import 'sliver_demo.dart';
+import 'sliver_easy_refresh_demo.dart';
 import 'tab_bar_demo.dart';
 import 'text_button_demo.dart';
 import 'text_field_demo.dart';
@@ -32,6 +34,8 @@ Map<String, Widget> routes = {
   "TextField": const TextFieldDemo(),
   "EasyRefresh": const EasyRefreshDemo(),
   "TabBar": const TabBarDemo(),
+  "Sliver": const SliverDemo(),
+  "Sliver EasyRefresh": const SliverEasyRefreshDemo(),
 };
 
 class DemoPage extends StatelessWidget {

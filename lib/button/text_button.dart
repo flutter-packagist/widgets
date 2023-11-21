@@ -18,6 +18,8 @@ class WrapperTextButton extends StatelessWidget {
   final TextStyle? textStyle;
   final Color textColor;
   final double textSize;
+  final TextOverflow? overflow;
+  final int? maxLines;
   final Color? backgroundColor;
   final Color? foregroundColor;
   final Color? overlayColor;
@@ -59,6 +61,8 @@ class WrapperTextButton extends StatelessWidget {
     this.textStyle,
     this.textColor = Colors.black,
     this.textSize = 14,
+    this.overflow,
+    this.maxLines,
     this.backgroundColor,
     this.foregroundColor,
     this.overlayColor = Colors.transparent,
@@ -89,6 +93,8 @@ class WrapperTextButton extends StatelessWidget {
     Widget child = Text(
       text ?? "",
       style: textStyle ?? TextStyle(color: textColor, fontSize: textSize),
+      overflow: overflow,
+      maxLines: maxLines,
     );
     if (this.child != null) {
       child = this.child!;

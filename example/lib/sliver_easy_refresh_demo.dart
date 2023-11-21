@@ -15,6 +15,7 @@ class _SliverDemoState extends State<SliverEasyRefreshDemo> {
     controlFinishRefresh: true,
     controlFinishLoad: true,
   );
+  final ScrollController listScrollController = ScrollController();
   int count = 20;
 
   @override
@@ -26,7 +27,7 @@ class _SliverDemoState extends State<SliverEasyRefreshDemo> {
         elevation: 0,
         titleText: 'Sliver EasyRefresh Demo',
       ),
-      body: nestedScrollView,
+      body: customScrollView,
     );
   }
 
@@ -97,6 +98,7 @@ class _SliverDemoState extends State<SliverEasyRefreshDemo> {
         },
         body: ListView.builder(
           physics: physics,
+          // controller: listScrollController,
           padding: EdgeInsets.zero,
           itemCount: count,
           itemBuilder: (context, index) => ListTile(
@@ -108,79 +110,80 @@ class _SliverDemoState extends State<SliverEasyRefreshDemo> {
   }
 
   Widget get customScrollView {
-    return CustomScrollView(
-      slivers: [
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-          delegate: SliverPersistentHeaderBuilder(
-            min: 0,
-            max: 200,
-            builder: (BuildContext context, double offset) {
-              return Container(
-                height: 200,
-                width: double.infinity,
-                color: Colors.red,
-              );
-            },
-          ),
-        ),
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-          delegate: SliverPersistentHeaderBuilder(
-            min: MediaQuery.of(context).padding.top + kToolbarHeight,
-            max: 500,
-            builder: (BuildContext context, double offset) {
-              return SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      height: 100,
-                      width: double.infinity,
-                      color: Colors.blue.shade200,
-                    ),
-                    Container(
-                      height: 200,
-                      width: double.infinity,
-                      color: Colors.blue.shade100,
-                    ),
-                    Container(
-                      height: 200,
-                      width: double.infinity,
-                      color: Colors.blue.shade50,
-                    ),
-                  ],
+    return WrapperEasyRefresh(
+      controller: refreshController,
+      header: const BallPulseHeader(
+        position: IndicatorPosition.locator,
+      ),
+      footer: const BallPulseFooter(
+        position: IndicatorPosition.locator,
+        infiniteOffset: 70,
+      ),
+      onRefresh: () async {
+        print('onRefresh');
+        await Future.delayed(const Duration(seconds: 1));
+        refreshController.finishRefresh(IndicatorResult.success);
+        count = 20;
+        setState(() {});
+      },
+      onLoad: () async {
+        print('onLoad');
+        await Future.delayed(const Duration(seconds: 1));
+        refreshController.finishLoad(IndicatorResult.success);
+        setState(() {});
+        count += 10;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {});
+        });
+      },
+      child: CustomScrollView(
+        controller: listScrollController,
+        slivers: [
+          const HeaderLocator.sliver(),
+          SliverToBoxAdapter(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: 100,
+                  width: double.infinity,
+                  color: Colors.blue.shade200,
                 ),
-              );
-            },
-          ),
-        ),
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-          delegate: SliverPersistentHeaderBuilder(
-            height: 50,
-            builder: (BuildContext context, double offset) {
-              return Container(
-                height: 50,
-                width: double.infinity,
-                color: Colors.yellow,
-              );
-            },
-          ),
-        ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => ListTile(
-              title: Text('Item $index'),
+                Container(
+                  height: 200,
+                  width: double.infinity,
+                  color: Colors.blue.shade100,
+                ),
+              ],
             ),
-            childCount: 100,
           ),
-        ),
-      ],
+          SliverPersistentHeader(
+            pinned: true,
+            floating: false,
+            delegate: SliverPersistentHeaderBuilder(
+              height: 50,
+              builder: (BuildContext context, double offset) {
+                return Container(
+                  height: 50,
+                  width: double.infinity,
+                  color: Colors.yellow,
+                );
+              },
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return ListTile(
+                  title: Text('Item $index'),
+                );
+              },
+              childCount: count,
+            ),
+          ),
+          const FooterLocator.sliver(),
+        ],
+      ),
     );
   }
 }

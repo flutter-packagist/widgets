@@ -43,6 +43,7 @@ class WrapperTextButton extends StatelessWidget {
   final double? width;
   final double? height;
   final Size? minimumSize;
+  final MaterialTapTargetSize? tapTargetSize;
 
   const WrapperTextButton({
     super.key,
@@ -86,6 +87,7 @@ class WrapperTextButton extends StatelessWidget {
     this.width,
     this.height,
     this.minimumSize,
+    this.tapTargetSize,
   }) : assert(child != null || text != null);
 
   @override
@@ -170,6 +172,7 @@ class WrapperTextButton extends StatelessWidget {
             iconSize: resolve<double?>(iconSize),
             alignment: alignment,
             minimumSize: resolve<Size?>(minimumSize),
+            tapTargetSize: tapTargetSize,
           ),
       child: child,
     );

@@ -65,6 +65,7 @@ class _TextButtonDemoState extends State<TextButtonDemo> {
               iconSize: 20,
               iconColor: Colors.white,
               gap: 8,
+              enable: false,
             ),
             const SizedBox(height: 16),
             WrapperTextButton(

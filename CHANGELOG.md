@@ -1,7 +1,7 @@
 ## 1.1.1
 
 * fixed: 修复WrapperEasyRefresh的header和footer属性不生效问题
-* feat: WrapperTextButton增加属性：overflow, maxLines
+* feat: WrapperTextButton增加属性：overflow, maxLines, enable
 
 ## 1.1.0
 

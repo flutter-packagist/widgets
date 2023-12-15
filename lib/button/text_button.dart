@@ -44,6 +44,7 @@ class WrapperTextButton extends StatelessWidget {
   final double? height;
   final Size? minimumSize;
   final MaterialTapTargetSize? tapTargetSize;
+  final bool enable;
 
   const WrapperTextButton({
     super.key,
@@ -88,13 +89,18 @@ class WrapperTextButton extends StatelessWidget {
     this.height,
     this.minimumSize,
     this.tapTargetSize,
+    this.enable = true,
   }) : assert(child != null || text != null);
 
   @override
   Widget build(BuildContext context) {
     Widget child = Text(
       text ?? "",
-      style: textStyle ?? TextStyle(color: textColor, fontSize: textSize),
+      style: textStyle ??
+          TextStyle(
+            color: textColor.withOpacity(enable ? 1 : 0.5),
+            fontSize: textSize,
+          ),
       overflow: overflow,
       maxLines: maxLines,
     );
@@ -144,11 +150,21 @@ class WrapperTextButton extends StatelessWidget {
       onPressed: onPressed,
       style: style ??
           ButtonStyle(
-            backgroundColor: resolve<Color?>(backgroundColor),
-            foregroundColor: resolve<Color?>(foregroundColor),
-            overlayColor: resolve<Color?>(overlayColor),
-            shadowColor: resolve<Color?>(shadowColor),
-            surfaceTintColor: resolve<Color?>(surfaceTintColor),
+            backgroundColor: resolve<Color?>(
+              backgroundColor?.withOpacity(enable ? 1 : 0.5),
+            ),
+            foregroundColor: resolve<Color?>(
+              foregroundColor?.withOpacity(enable ? 1 : 0.5),
+            ),
+            overlayColor: resolve<Color?>(
+              overlayColor?.withOpacity(enable ? 1 : 0.5),
+            ),
+            shadowColor: resolve<Color?>(
+              shadowColor?.withOpacity(enable ? 1 : 0.5),
+            ),
+            surfaceTintColor: resolve<Color?>(
+              surfaceTintColor?.withOpacity(enable ? 1 : 0.5),
+            ),
             shape: resolve<OutlinedBorder?>(shape ??
                 RoundedRectangleBorder(
                   borderRadius:
@@ -168,7 +184,9 @@ class WrapperTextButton extends StatelessWidget {
                 )),
             padding: resolve<EdgeInsetsGeometry?>(padding),
             elevation: resolve<double?>(elevation),
-            iconColor: resolve<Color?>(iconColor),
+            iconColor: resolve<Color?>(
+              iconColor?.withOpacity(enable ? 1 : 0.5),
+            ),
             iconSize: resolve<double?>(iconSize),
             alignment: alignment,
             minimumSize: resolve<Size?>(minimumSize),

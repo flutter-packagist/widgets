@@ -158,15 +158,9 @@ class WrapperTextButton extends StatelessWidget {
             foregroundColor: resolve<Color?>(
               foregroundColor?.withOpacity(enable ? 1 : 0.5),
             ),
-            overlayColor: resolve<Color?>(
-              overlayColor?.withOpacity(enable ? 1 : 0.5),
-            ),
-            shadowColor: resolve<Color?>(
-              shadowColor?.withOpacity(enable ? 1 : 0.5),
-            ),
-            surfaceTintColor: resolve<Color?>(
-              surfaceTintColor?.withOpacity(enable ? 1 : 0.5),
-            ),
+            overlayColor: resolve<Color?>(overlayColor),
+            shadowColor: resolve<Color?>(shadowColor),
+            surfaceTintColor: resolve<Color?>(surfaceTintColor),
             shape: resolve<OutlinedBorder?>(shape ??
                 RoundedRectangleBorder(
                   borderRadius:

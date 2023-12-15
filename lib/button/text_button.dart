@@ -98,7 +98,7 @@ class WrapperTextButton extends StatelessWidget {
       text ?? "",
       style: textStyle ??
           TextStyle(
-            color: textColor.withOpacity(enable ? 1 : 0.5),
+            color: textColor.enable(enable),
             fontSize: textSize,
           ),
       overflow: overflow,
@@ -152,12 +152,8 @@ class WrapperTextButton extends StatelessWidget {
       },
       style: style ??
           ButtonStyle(
-            backgroundColor: resolve<Color?>(
-              backgroundColor?.withOpacity(enable ? 1 : 0.5),
-            ),
-            foregroundColor: resolve<Color?>(
-              foregroundColor?.withOpacity(enable ? 1 : 0.5),
-            ),
+            backgroundColor: resolve<Color?>(backgroundColor?.enable(enable)),
+            foregroundColor: resolve<Color?>(foregroundColor?.enable(enable)),
             overlayColor: resolve<Color?>(overlayColor),
             shadowColor: resolve<Color?>(shadowColor),
             surfaceTintColor: resolve<Color?>(surfaceTintColor),
@@ -180,9 +176,7 @@ class WrapperTextButton extends StatelessWidget {
                 )),
             padding: resolve<EdgeInsetsGeometry?>(padding),
             elevation: resolve<double?>(elevation),
-            iconColor: resolve<Color?>(
-              iconColor?.withOpacity(enable ? 1 : 0.5),
-            ),
+            iconColor: resolve<Color?>(iconColor?.enable(enable)),
             iconSize: resolve<double?>(iconSize),
             alignment: alignment,
             minimumSize: resolve<Size?>(minimumSize),
@@ -202,5 +196,12 @@ class WrapperTextButton extends StatelessWidget {
 
   MaterialStateProperty<T>? resolve<T>(T value) {
     return value == null ? null : MaterialStateProperty.all<T>(value);
+  }
+}
+
+extension ColorExtension on Color? {
+  Color? enable(bool enable) {
+    if (this == Colors.transparent) return this;
+    return this?.withOpacity(enable ? 1 : 0.5);
   }
 }

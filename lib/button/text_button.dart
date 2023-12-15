@@ -147,7 +147,9 @@ class WrapperTextButton extends StatelessWidget {
       }
     }
     child = TextButton(
-      onPressed: onPressed,
+      onPressed: () {
+        if (enable) onPressed.call();
+      },
       style: style ??
           ButtonStyle(
             backgroundColor: resolve<Color?>(

@@ -56,9 +56,12 @@ class WrapperTags extends StatefulWidget {
 }
 
 class _WrapperTagsState extends State<WrapperTags> {
+  List tagsRenderList = [];
+
   @override
   Widget build(BuildContext context) {
     if (widget.tags.isEmpty) return const SizedBox.shrink();
+    tagsRenderList = getTagsRenderList();
     return Container(
       color: widget.backgroundColor,
       margin: widget.margin,
@@ -99,7 +102,7 @@ class _WrapperTagsState extends State<WrapperTags> {
           ),
         ),
         splashFactory: widget.splashFactory,
-        tapTargetSize: widget.tapTargetSize,
+        tapTargetSize: widget.tapTargetSize ?? MaterialTapTargetSize.shrinkWrap,
         minimumSize: MaterialStateProperty.all(widget.minimumSize ?? Size.zero),
       ),
       child: Text(
@@ -111,14 +114,16 @@ class _WrapperTagsState extends State<WrapperTags> {
     );
   }
 
-  List get tagsRenderList {
+  List getTagsRenderList() {
     if (widget.maxLines == null) return widget.tags;
+    // 布局宽度
     var layoutWidth = MediaQuery.of(context).size.width -
         (widget.margin?.horizontal ?? 0) -
         (widget.padding?.horizontal ?? 0);
-    var maxLines = widget.maxLines!;
-    var tagsWidth = 0.0;
-    var tagsRenderList = [];
+    var maxLines = widget.maxLines!; // 最大行数
+    var tagsInLine = 0; // 当前行的 tag 数量
+    var tagsWidth = 0.0; // 当前行的 tag 宽度
+    var tagsRenderList = []; // 渲染的 tag 列表
     for (int i = 0; i < widget.tags.length; i++) {
       var tag = widget.tags[i];
       if (tag is! String) return widget.tags;
@@ -129,12 +134,22 @@ class _WrapperTagsState extends State<WrapperTags> {
         overflow: TextOverflow.ellipsis,
       );
       renderParagraph.layout(BoxConstraints(maxWidth: layoutWidth));
+      if (tagsWidth > 0) tagsWidth += widget.spacing;
       tagsWidth += renderParagraph.textSize.width;
       tagsWidth += widget.itemPadding?.horizontal ?? 0;
+      tagsInLine++;
       if (tagsWidth > layoutWidth) {
-        if (--maxLines <= 0) break;
+        // 如果当前行只有一个 tag，直接渲染
+        if (tagsInLine == 1) {
+          tagsRenderList.add(tag);
+          ++i;
+        }
+        // 超出最大行数，结束循环
+        if (--maxLines < 1) break;
         tagsWidth = 0.0;
+        tagsInLine = 0;
         --i;
+        continue;
       }
       tagsRenderList.add(tag);
     }

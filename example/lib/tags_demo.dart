@@ -40,6 +40,25 @@ class _TagsDemoState extends State<TagsDemo> {
               tags: tags,
               builder: (context, index) => const Text("自定义标签"),
             ),
+            WrapperTags(
+              tags: const [
+                "标签1",
+                "标签2",
+                "标签3",
+                "标签4标签4标签4标签4标签4标签4标签4标签4标签4标签4标签4标签4标签4标签4标签4标签4",
+                "自定义标签"
+              ],
+              itemStyle: const TextStyle(color: Colors.blue, fontSize: 20),
+              itemColor: Colors.grey.shade200,
+              itemBorderRadius: BorderRadius.circular(30),
+              itemPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 10,
+              ),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              maxLines: 1,
+            ),
           ],
         ),
       ),

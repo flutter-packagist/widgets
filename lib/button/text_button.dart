@@ -202,6 +202,6 @@ class WrapperTextButton extends StatelessWidget {
 extension ColorExtension on Color? {
   Color? enable(bool enable) {
     if (this == Colors.transparent) return this;
-    return this?.withOpacity(enable ? 1 : 0.5);
+    return enable ? this : this?.withOpacity(0.5);
   }
 }

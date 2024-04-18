@@ -1,6 +1,6 @@
 name: widgets
 description: widget library
-version: 1.2.0
+version: 1.2.1
 homepage: https://github.com/flutter-packagist/widgets
 
 environment:
@@ -17,7 +17,7 @@ dependencies:
   network:
     git:
       url: https://github.com/flutter-packagist/network.git
-      ref: 1.1.0
+      ref: 1.2.0
 
 dev_dependencies:
   flutter_test:

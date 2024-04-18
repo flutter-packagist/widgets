@@ -1,3 +1,7 @@
+## 1.2.1
+
+* feat: 升级network库
+
 ## 1.2.0
 
 * feat: 新增WrapperTags组件

@@ -11,17 +11,16 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cached_network_image: ^3.3.0   # 网络图片加载
-  easy_refresh: ^3.3.2+2         # 下拉刷新，上拉加载
-  dio: ^5.3.3                    # 网络请求
+  cached_network_image: ^3.3.1   # 网络图片加载
+  easy_refresh: ^3.3.5+1         # 下拉刷新，上拉加载
+  dio: ^5.4.3+1                  # 网络请求
   network:
     git:
       url: https://github.com/flutter-packagist/network.git
-      ref: 1.2.0
+      ref: 1.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
 
 flutter:

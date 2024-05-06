@@ -5,6 +5,7 @@ class WrapperCachedNetworkImage extends StatefulWidget {
   final String imageUrl;
   final Map<String, String>? httpHeaders;
   final ImageWidgetBuilder? imageBuilder;
+  final Widget? defaultPlaceholder;
   final PlaceholderWidgetBuilder? placeholder;
   final ProgressIndicatorBuilder? progressIndicatorBuilder;
   final LoadingErrorWidgetBuilder? errorWidget;
@@ -35,6 +36,7 @@ class WrapperCachedNetworkImage extends StatefulWidget {
     required this.imageUrl,
     this.httpHeaders,
     this.imageBuilder,
+    this.defaultPlaceholder,
     this.placeholder,
     this.progressIndicatorBuilder,
     this.errorWidget,
@@ -136,11 +138,17 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
 
   PlaceholderWidgetBuilder? get placeholder {
     if (!widget.usePlaceholder) return null;
+    if (widget.defaultPlaceholder != null) {
+      return (context, url) => widget.defaultPlaceholder!;
+    }
     return defaultPlaceHolder;
   }
 
   ProgressIndicatorBuilder? get progressIndicatorBuilder {
     if (widget.usePlaceholder) return null;
+    if (widget.defaultPlaceholder != null) {
+      return (context, url, progress) => widget.defaultPlaceholder!;
+    }
     if (widget.imageUrl.isEmpty) {
       return (context, url, downloadProgress) =>
           defaultPlaceHolder(context, url);
@@ -161,6 +169,9 @@ class _WrapperCachedNetworkImageState extends State<WrapperCachedNetworkImage> {
   }
 
   LoadingErrorWidgetBuilder get errorWidget {
+    if (widget.defaultPlaceholder != null) {
+      return (context, url, error) => widget.defaultPlaceholder!;
+    }
     if (widget.imageUrl.isEmpty) {
       return (context, url, error) => defaultPlaceHolder(context, url);
     }

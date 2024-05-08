@@ -1,7 +1,10 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:widgets/widgets.dart';
+
+import 'ext/image_ext.dart';
 
 class TabBarDemo extends StatefulWidget {
   const TabBarDemo({super.key});
@@ -15,9 +18,13 @@ class _TabBarDemoState extends State<TabBarDemo> with TickerProviderStateMixin {
   late TabController tabController;
   late List<AnimationController> animationControllers;
 
+  /// Indicator图片
+  ui.Image? indicatorImage;
+
   @override
   void initState() {
     super.initState();
+    loadIndicatorImage();
     tabController = TabController(length: tabs.length, vsync: this)
       ..addListener(_listener);
     animationControllers = List.generate(
@@ -36,6 +43,13 @@ class _TabBarDemoState extends State<TabBarDemo> with TickerProviderStateMixin {
     } else {
       animationControllers[tabController.index].forward();
     }
+  }
+
+  void loadIndicatorImage() async {
+    indicatorImage = await ImageExt.getAssetImage(
+      "assets/images/indicator.png",
+    );
+    setState(() {});
   }
 
   @override
@@ -61,6 +75,7 @@ class _TabBarDemoState extends State<TabBarDemo> with TickerProviderStateMixin {
         tabBarWrapper,
         tabBar,
         tabBarAnimation,
+        tabBarImage,
         tabBarIndicator,
         tabBarIndicator2,
         tabBarIndicator3,
@@ -68,6 +83,7 @@ class _TabBarDemoState extends State<TabBarDemo> with TickerProviderStateMixin {
         tabBarIndicator5,
         tabBarIndicator6,
         tabBarIndicator7,
+        tabBarIndicator8,
         Expanded(child: tabView),
       ]),
     );
@@ -129,6 +145,7 @@ class _TabBarDemoState extends State<TabBarDemo> with TickerProviderStateMixin {
           fontWeight: FontWeight.normal,
         ),
         tabs: tabs.map((e) => Tab(text: e)).toList(),
+        tabAlignment: TabAlignment.start,
       ),
     );
   }
@@ -174,6 +191,35 @@ class _TabBarDemoState extends State<TabBarDemo> with TickerProviderStateMixin {
             )
             .values
             .toList(),
+      ),
+    );
+  }
+
+  Widget get tabBarImage {
+    if (indicatorImage == null) {
+      return const SizedBox();
+    }
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: TabBar(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicator: ImageTabIndicator(
+          image: indicatorImage!,
+          height: 8,
+          width: 30,
+          alignment: IndicatorAlignment.bottom,
+          relativeOffsetY: 15,
+        ),
       ),
     );
   }
@@ -390,6 +436,44 @@ class _TabBarDemoState extends State<TabBarDemo> with TickerProviderStateMixin {
                     Radius.zero,
               );
             }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget get tabBarIndicator8 {
+    return Container(
+      width: double.infinity,
+      color: Colors.grey.shade100,
+      child: WrapperTabBar.textScale(
+        controller: tabController,
+        labelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+        labelColor: Colors.black,
+        unselectedLabelColor: Colors.black,
+        tabs: tabs.map((e) => Tab(text: e)).toList(),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: TabIndicator(
+          width: 40,
+          height: 8,
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(2),
+          relativeOffsetY: 8,
+          onShaderChanged: (index) {
+            double fillTabWidth =
+                MediaQuery.of(context).size.width / tabs.length;
+            return ui.Gradient.linear(
+              ui.Offset(fillTabWidth * index + 30, 0),
+              ui.Offset(fillTabWidth * index + 90, 0),
+              [const Color(0xFFFFEF00), const Color(0xFFFF771F)],
+            );
           },
         ),
       ),

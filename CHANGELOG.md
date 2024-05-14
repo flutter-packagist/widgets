@@ -1,4 +1,4 @@
-## 1.2.1
+## 1.3.0
 
 * feat: 依赖库升级
 * feat: WrapperCachedNetworkImage新增defaultPlaceholder属性

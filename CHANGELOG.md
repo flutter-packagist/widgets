@@ -4,6 +4,7 @@
 * feat: WrapperCachedNetworkImage新增defaultPlaceholder属性
 * feat: Demo升级支持AGP8.0
 * feat: TabBar indicator 支持背景渐变和背景图片
+* feat: WrapperTextButton新增属性：textAlign，flexFit
 
 ## 1.2.0
 

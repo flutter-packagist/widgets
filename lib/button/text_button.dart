@@ -18,6 +18,7 @@ class WrapperTextButton extends StatelessWidget {
   final TextStyle? textStyle;
   final Color textColor;
   final double textSize;
+  final TextAlign? textAlign;
   final TextOverflow? overflow;
   final int? maxLines;
   final Color? backgroundColor;
@@ -45,6 +46,7 @@ class WrapperTextButton extends StatelessWidget {
   final Size? minimumSize;
   final MaterialTapTargetSize? tapTargetSize;
   final bool enable;
+  final FlexFit flexFit;
 
   const WrapperTextButton({
     super.key,
@@ -63,6 +65,7 @@ class WrapperTextButton extends StatelessWidget {
     this.textStyle,
     this.textColor = Colors.black,
     this.textSize = 14,
+    this.textAlign,
     this.overflow,
     this.maxLines,
     this.backgroundColor,
@@ -90,6 +93,7 @@ class WrapperTextButton extends StatelessWidget {
     this.minimumSize,
     this.tapTargetSize,
     this.enable = true,
+    this.flexFit = FlexFit.loose,
   }) : assert(child != null || text != null);
 
   @override
@@ -101,6 +105,7 @@ class WrapperTextButton extends StatelessWidget {
             color: textColor.enable(enable),
             fontSize: textSize,
           ),
+      textAlign: textAlign,
       overflow: overflow,
       maxLines: maxLines,
     );
@@ -114,14 +119,14 @@ class WrapperTextButton extends StatelessWidget {
           children: <Widget>[
             icon!,
             SizedBox(width: gap),
-            Flexible(child: child)
+            Flexible(child: child, fit: flexFit),
           ],
         );
       } else if (iconPosition == IconPosition.right) {
         child = Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Flexible(child: child),
+            Flexible(child: child, fit: flexFit),
             SizedBox(width: gap),
             icon!
           ],
@@ -132,14 +137,14 @@ class WrapperTextButton extends StatelessWidget {
           children: <Widget>[
             icon!,
             SizedBox(height: gap),
-            Flexible(child: child)
+            Flexible(child: child, fit: flexFit),
           ],
         );
       } else if (iconPosition == IconPosition.bottom) {
         child = Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Flexible(child: child),
+            Flexible(child: child, fit: flexFit),
             SizedBox(height: gap),
             icon!
           ],

@@ -43,10 +43,13 @@ class WrapperTextField extends StatelessWidget {
   final AppPrivateCommandCallback? onAppPrivateCommand;
   final List<TextInputFormatter>? inputFormatters;
   final bool? enabled;
+  final bool? ignorePointers;
   final double cursorWidth;
   final double? cursorHeight;
   final Radius? cursorRadius;
+  final bool? cursorOpacityAnimates;
   final Color? cursorColor;
+  final Color? cursorErrorColor;
   final ui.BoxHeightStyle selectionHeightStyle;
   final ui.BoxWidthStyle selectionWidthStyle;
   final Brightness? keyboardAppearance;
@@ -55,6 +58,7 @@ class WrapperTextField extends StatelessWidget {
   final bool? enableInteractiveSelection;
   final TextSelectionControls? selectionControls;
   final GestureTapCallback? onTap;
+  final bool onTapAlwaysCalled;
   final TapRegionCallback? onTapOutside;
   final MouseCursor? mouseCursor;
   final InputCounterWidgetBuilder? buildCounter;
@@ -105,10 +109,13 @@ class WrapperTextField extends StatelessWidget {
     this.onAppPrivateCommand,
     this.inputFormatters,
     this.enabled,
+    this.ignorePointers,
     this.cursorWidth = 2.0,
     this.cursorHeight,
     this.cursorRadius,
+    this.cursorOpacityAnimates,
     this.cursorColor,
+    this.cursorErrorColor,
     this.selectionHeightStyle = ui.BoxHeightStyle.tight,
     this.selectionWidthStyle = ui.BoxWidthStyle.tight,
     this.keyboardAppearance,
@@ -117,6 +124,7 @@ class WrapperTextField extends StatelessWidget {
     this.enableInteractiveSelection,
     this.selectionControls,
     this.onTap,
+    this.onTapAlwaysCalled = false,
     this.onTapOutside,
     this.mouseCursor,
     this.buildCounter,
@@ -128,7 +136,7 @@ class WrapperTextField extends StatelessWidget {
     this.restorationId,
     this.scribbleEnabled = false,
     this.enableIMEPersonalizedLearning = true,
-    this.contextMenuBuilder,
+    this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.canRequestFocus = true,
     this.spellCheckConfiguration,
     this.magnifierConfiguration,
@@ -186,10 +194,13 @@ class WrapperTextField extends StatelessWidget {
     this.onAppPrivateCommand,
     this.inputFormatters,
     this.enabled,
+    this.ignorePointers,
     this.cursorWidth = 2.0,
     this.cursorHeight,
     this.cursorRadius,
+    this.cursorOpacityAnimates,
     this.cursorColor,
+    this.cursorErrorColor,
     this.selectionHeightStyle = ui.BoxHeightStyle.tight,
     this.selectionWidthStyle = ui.BoxWidthStyle.tight,
     this.keyboardAppearance,
@@ -198,6 +209,7 @@ class WrapperTextField extends StatelessWidget {
     this.enableInteractiveSelection,
     this.selectionControls,
     this.onTap,
+    this.onTapAlwaysCalled = false,
     this.onTapOutside,
     this.mouseCursor,
     this.buildCounter,
@@ -209,7 +221,7 @@ class WrapperTextField extends StatelessWidget {
     this.restorationId,
     this.scribbleEnabled = false,
     this.enableIMEPersonalizedLearning = true,
-    this.contextMenuBuilder,
+    this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.canRequestFocus = true,
     this.spellCheckConfiguration,
     this.magnifierConfiguration,
@@ -265,10 +277,13 @@ class WrapperTextField extends StatelessWidget {
     this.onAppPrivateCommand,
     this.inputFormatters,
     this.enabled,
+    this.ignorePointers,
     this.cursorWidth = 2.0,
     this.cursorHeight,
     this.cursorRadius,
+    this.cursorOpacityAnimates,
     this.cursorColor,
+    this.cursorErrorColor,
     this.selectionHeightStyle = ui.BoxHeightStyle.tight,
     this.selectionWidthStyle = ui.BoxWidthStyle.tight,
     this.keyboardAppearance,
@@ -277,6 +292,7 @@ class WrapperTextField extends StatelessWidget {
     this.enableInteractiveSelection,
     this.selectionControls,
     this.onTap,
+    this.onTapAlwaysCalled = false,
     this.onTapOutside,
     this.mouseCursor,
     this.buildCounter,
@@ -288,7 +304,7 @@ class WrapperTextField extends StatelessWidget {
     this.restorationId,
     this.scribbleEnabled = false,
     this.enableIMEPersonalizedLearning = true,
-    this.contextMenuBuilder,
+    this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.canRequestFocus = true,
     this.spellCheckConfiguration,
     this.magnifierConfiguration,
@@ -354,6 +370,7 @@ class WrapperTextField extends StatelessWidget {
       hintStyle: decoration?.hintStyle,
       hintTextDirection: decoration?.hintTextDirection,
       hintMaxLines: decoration?.hintMaxLines,
+      hintFadeDuration: decoration?.hintFadeDuration,
       error: decoration?.error,
       errorText: decoration?.errorText,
       errorStyle: decoration?.errorStyle,
@@ -462,6 +479,13 @@ class WrapperTextField extends StatelessWidget {
       canRequestFocus: canRequestFocus,
       spellCheckConfiguration: spellCheckConfiguration,
       magnifierConfiguration: magnifierConfiguration,
+    );
+  }
+
+  static Widget _defaultContextMenuBuilder(
+      BuildContext context, EditableTextState editableTextState) {
+    return AdaptiveTextSelectionToolbar.editableText(
+      editableTextState: editableTextState,
     );
   }
 }

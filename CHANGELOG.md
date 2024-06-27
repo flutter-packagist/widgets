@@ -1,3 +1,7 @@
+## 1.3.1
+
+* fixed: 修复WrapperTextField不显示粘贴按钮的问题
+
 ## 1.3.0
 
 * feat: 依赖库升级

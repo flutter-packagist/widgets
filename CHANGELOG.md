@@ -1,3 +1,7 @@
+## 1.3.2
+
+* feat: 新增BubbleBox组件
+
 ## 1.3.1
 
 * fixed: 修复WrapperTextField不显示粘贴按钮的问题

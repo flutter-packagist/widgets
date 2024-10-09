@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'bubble_box_demo.dart';
 import 'easy_refresh_demo.dart';
 import 'network_image_demo.dart';
 import 'sliver_demo.dart';
@@ -38,6 +39,7 @@ Map<String, Widget> routes = {
   "Sliver": const SliverDemo(),
   "Sliver EasyRefresh": const SliverEasyRefreshDemo(),
   "Tags": const TagsDemo(),
+  "气泡框": const BubbleBoxDemo(),
 };
 
 class DemoPage extends StatelessWidget {

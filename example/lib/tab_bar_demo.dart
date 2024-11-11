@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:widgets/widgets.dart';
+import 'package:packagist_widgets/widgets.dart';
 
 import 'ext/image_ext.dart';
 

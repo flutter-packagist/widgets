@@ -9,7 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  widgets:
+  packagist_network: 1.2.2
+  packagist_widgets:
     path: ../
 
 dev_dependencies:

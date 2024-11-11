@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:widgets/refresh/ball/footer/ball_pulse_footer.dart';
-import 'package:widgets/refresh/ball/header/ball_pulse_header.dart';
-import 'package:widgets/widgets.dart';
+import 'package:packagist_widgets/refresh/ball/footer/ball_pulse_footer.dart';
+import 'package:packagist_widgets/refresh/ball/header/ball_pulse_header.dart';
+import 'package:packagist_widgets/widgets.dart';
 
 class SliverEasyRefreshDemo extends StatefulWidget {
   const SliverEasyRefreshDemo({super.key});

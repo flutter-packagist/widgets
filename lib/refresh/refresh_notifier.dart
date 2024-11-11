@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:easy_refresh/easy_refresh.dart';
-import 'package:network/network.dart';
+import 'package:packagist_network/network.dart';
 
 class PageKey {
   static String page = 'page';

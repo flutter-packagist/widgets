@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:widgets/widgets.dart';
+import 'package:packagist_network/network.dart';
+import 'package:packagist_widgets/widgets.dart';
 
 class EasyRefreshDemo extends StatefulWidget {
   const EasyRefreshDemo({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:widgets/widgets.dart';
+import 'package:packagist_widgets/widgets.dart';
 
 class TagsDemo extends StatefulWidget {
   const TagsDemo({super.key});

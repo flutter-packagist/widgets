@@ -1277,9 +1277,16 @@ class _WrapperTabBarState extends State<WrapperTabBar> {
         ),
       );
       if (theme.useMaterial3) {
-        final AlignmentGeometry effectiveAlignment = switch (effectiveTabAlignment) {
-          TabAlignment.center => Alignment.center,
-          TabAlignment.start || TabAlignment.startOffset || TabAlignment.fill => AlignmentDirectional.centerStart,
+        final AlignmentGeometry effectiveAlignment;
+        switch (effectiveTabAlignment) {
+          case TabAlignment.center:
+            effectiveAlignment = Alignment.center;
+            break;
+          case TabAlignment.start:
+          case TabAlignment.startOffset:
+          case TabAlignment.fill:
+            effectiveAlignment = AlignmentDirectional.centerStart;
+            break;
         };
 
         final Color dividerColor = widget.dividerColor ?? tabBarTheme.dividerColor ?? _defaults.dividerColor!;

@@ -1,4 +1,6 @@
+import 'package:example/visibility_detector_demo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'bubble_box_demo.dart';
 import 'easy_refresh_demo.dart';
@@ -12,6 +14,13 @@ import 'text_field_demo.dart';
 
 void main() {
   runApp(const MyApp());
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarContrastEnforced: true,
+  ));
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 }
 
 class MyApp extends StatelessWidget {
@@ -40,6 +49,7 @@ Map<String, Widget> routes = {
   "Sliver EasyRefresh": const SliverEasyRefreshDemo(),
   "Tags": const TagsDemo(),
   "气泡框": const BubbleBoxDemo(),
+  "可见性": const VisibilityDetectorDemo(),
 };
 
 class DemoPage extends StatelessWidget {

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:widgets/widgets.dart';
+import 'package:packagist_widgets/widgets.dart';
 
 class TextFieldDemo extends StatefulWidget {
   const TextFieldDemo({super.key});

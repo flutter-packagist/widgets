@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:widgets/widgets.dart';
+import 'package:packagist_widgets/widgets.dart';
 
 class NetworkImageDemo extends StatefulWidget {
   const NetworkImageDemo({super.key});

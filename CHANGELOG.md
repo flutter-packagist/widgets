@@ -1,3 +1,8 @@
+## 1.3.3
+
+* feat: 新增WrapperVisibilityDetector组件
+* feat: 依赖库升级
+
 ## 1.3.2
 
 * feat: 新增BubbleBox组件

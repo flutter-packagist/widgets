@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:widgets/appbar/app_bar.dart';
-import 'package:widgets/bubble/bubble_box.dart';
+import 'package:packagist_widgets/appbar/app_bar.dart';
+import 'package:packagist_widgets/bubble/bubble_box.dart';
 
 class BubbleBoxDemo extends StatefulWidget {
   const BubbleBoxDemo({super.key});

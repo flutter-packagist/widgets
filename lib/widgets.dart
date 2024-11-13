@@ -5,6 +5,8 @@ export 'button/text_button.dart';
 export 'delegate/sliver_grid_delegate_height.dart';
 export 'delegate/sliver_persistent_header_delegate.dart';
 export 'detector/visibility_detector.dart';
+export 'detector/visibility_detector_controller.dart';
+export 'detector/visibility_item.dart';
 export 'field/text_field.dart';
 export 'image/cached_image_widget.dart';
 export 'image/image_asset.dart';

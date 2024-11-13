@@ -1,3 +1,7 @@
+## 1.3.4
+
+* feat: 替换WrapperVisibilityDetector为VisibilityDetector
+
 ## 1.3.3
 
 * feat: 新增WrapperVisibilityDetector组件

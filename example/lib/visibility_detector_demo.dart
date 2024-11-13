@@ -15,7 +15,7 @@ class _VisibilityDetectorDemoState extends State<VisibilityDetectorDemo> {
       child: ListView.builder(
         itemCount: 100,
         itemBuilder: (context, index) {
-          return WrapperVisibilityDetector(
+          return VisibilityDetector(
             key: Key('item_$index'),
             child: ListTile(
               title: Text('Item $index'),

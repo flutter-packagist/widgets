@@ -94,7 +94,19 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     if (info.visibleFraction == _lastVisibleFraction) return;
     _lastVisibleFraction = info.visibleFraction;
     // If the visible fraction is less than the threshold, don't fire
-    if (info.visibleFraction < _visibleFraction) return;
+    if (info.visibleFraction < _visibleFraction) {
+      ContainerLayer? curLayer = layer;
+      int times = 5;
+      // If the visible viewport larger than the bounds, don't fire
+      while (curLayer != null && curLayer is! ClipRectLayer) {
+        if (times-- == 0) break;
+        curLayer = curLayer.parent;
+      }
+      if (curLayer is! ClipRectLayer) return;
+      final double viewportHeight = curLayer.clipRect?.height ?? 0;
+      if (bounds.height < viewportHeight) return;
+      if (info.visibleBounds.height / _visibleFraction < viewportHeight) return;
+    }
     // If the triggerOnce flag is set and the widget has already been shown, don't fire
     if (_triggerOnce && _shownKeys.contains(key.hashCode)) return;
     if (visible) _shownKeys.add(key.hashCode);

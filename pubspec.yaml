@@ -1,6 +1,6 @@
 name: packagist_widgets
 description: widget library
-version: 1.3.4
+version: 1.3.5
 homepage: https://github.com/flutter-packagist/widgets
 
 environment:

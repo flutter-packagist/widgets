@@ -11,6 +11,7 @@ import 'tab_bar_demo.dart';
 import 'tags_demo.dart';
 import 'text_button_demo.dart';
 import 'text_field_demo.dart';
+import 'text_height_demo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -50,6 +51,7 @@ Map<String, Widget> routes = {
   "Tags": const TagsDemo(),
   "气泡框": const BubbleBoxDemo(),
   "可见性": const VisibilityDetectorDemo(),
+  "文本高度对比": const TextHeightDemo(),
 };
 
 class DemoPage extends StatelessWidget {

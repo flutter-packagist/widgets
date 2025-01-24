@@ -1,4 +1,10 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+import '../extension/render_ext.dart';
+import '../extension/string_ext.dart';
 
 enum IconPosition { left, right, top, bottom }
 
@@ -11,7 +17,7 @@ class WrapperTextButton extends StatelessWidget {
   final Clip clipBehavior;
   final FocusNode? focusNode;
   final bool autofocus;
-  final MaterialStatesController? statesController;
+  final WidgetStatesController? statesController;
   final bool? isSemanticButton;
   final Widget? child;
   final String? text;
@@ -47,6 +53,7 @@ class WrapperTextButton extends StatelessWidget {
   final MaterialTapTargetSize? tapTargetSize;
   final bool enable;
   final FlexFit flexFit;
+  final bool shrinkWrap;
 
   const WrapperTextButton({
     super.key,
@@ -94,24 +101,79 @@ class WrapperTextButton extends StatelessWidget {
     this.tapTargetSize,
     this.enable = true,
     this.flexFit = FlexFit.loose,
+    this.shrinkWrap = false,
   }) : assert(child != null || text != null);
 
   @override
   Widget build(BuildContext context) {
+    String text = this.text ?? "";
+    TextStyle textStyle = this.textStyle ??
+        TextStyle(
+          color: textColor.enable(enable),
+          fontSize: textSize,
+        );
     Widget child = Text(
-      text ?? "",
-      style: textStyle ??
-          TextStyle(
-            color: textColor.enable(enable),
-            fontSize: textSize,
-          ),
+      text,
+      style: textStyle,
       textAlign: textAlign,
       overflow: overflow,
       maxLines: maxLines,
     );
+
+    // 解决Android与iOS平台下字体对齐问题
+    // https://docs.google.com/spreadsheets/d/1864hy_1r4vxf1I864gIlj8m3tgZeijG-BwhghSm5OJQ/edit?gid=0#gid=0
+    bool shrinkWrap = this.shrinkWrap;
+    Size size = renderSize(
+      text,
+      textStyle: textStyle,
+      textScaler: MediaQuery.of(context).textScaler,
+    );
+    if (Platform.isAndroid) {
+      Offset? offset;
+      double textHeight = size.height;
+      // 如果是英文或数字，增加高度（由于计算出来的高度比实际高度小）
+      if (text.isEnglishOrDigits) {
+        textHeight += 4;
+      }
+      TextScaler textScaler = MediaQuery.of(context).textScaler;
+      String scaleText = textScaler.toString();
+      double scaleFactor = scaleText.getScaleFactor;
+      // 如果文本高度大于按钮设定的高度，向上偏移文本
+      if (height != null && textHeight > height!) {
+        shrinkWrap = true;
+        offset = Offset(0, (height! - textHeight) * 0.8);
+      } else if (text.isContainChinese) {
+        // 如果是中文，向下偏移文本（随着字体大小的增加，增速变快）
+        offset = Offset(0, -(0.1 + 0.4 * pow(scaleFactor, 5)));
+      } else if (text.isEnglishOrDigits) {
+        // 如果是中文，向上偏移文本（随着字体大小的增加，增速变慢）
+        offset = Offset(0, (0.1 * log(pow(scaleFactor, 2) * 12)));
+      }
+      if (offset != null) {
+        child = Transform.translate(offset: offset, child: child);
+      }
+    } else if (Platform.isIOS) {
+      if (height != null && size.height > height!) {
+        double percent = 0.1;
+        if (text.isEnglishOrDigits) percent = 0.3;
+        child = Transform.translate(
+          offset: Offset(0, (height! - size.height) * percent),
+          child: SizedBox(
+            width: size.width + 6,
+            child: OverflowBox(
+              maxHeight: size.height,
+              child: child,
+            ),
+          ),
+        );
+      }
+    }
+
     if (this.child != null) {
       child = this.child!;
     }
+
+    // 设置图标及位置
     if (icon != null) {
       if (iconPosition == IconPosition.left) {
         child = Row(
@@ -151,10 +213,29 @@ class WrapperTextButton extends StatelessWidget {
         );
       }
     }
+
+    Size? minimumSize = this.minimumSize;
+    EdgeInsetsGeometry? padding = this.padding;
+    MaterialTapTargetSize? tapTargetSize = this.tapTargetSize;
+    if (shrinkWrap) {
+      if (padding == null) padding = EdgeInsets.zero;
+      minimumSize = Size.zero;
+      tapTargetSize = MaterialTapTargetSize.shrinkWrap;
+    }
     child = TextButton(
       onPressed: () {
         if (enable) onPressed.call();
       },
+      onLongPress: () {
+        if (enable) onLongPress?.call();
+      },
+      onHover: onHover,
+      onFocusChange: onFocusChange,
+      clipBehavior: clipBehavior,
+      focusNode: focusNode,
+      autofocus: autofocus,
+      statesController: statesController,
+      isSemanticButton: isSemanticButton,
       style: style ??
           ButtonStyle(
             backgroundColor: resolve<Color?>(backgroundColor?.enable(enable)),
@@ -199,8 +280,8 @@ class WrapperTextButton extends StatelessWidget {
     return child;
   }
 
-  MaterialStateProperty<T>? resolve<T>(T value) {
-    return value == null ? null : MaterialStateProperty.all<T>(value);
+  WidgetStateProperty<T>? resolve<T>(T value) {
+    return value == null ? null : WidgetStateProperty.all<T>(value);
   }
 }
 

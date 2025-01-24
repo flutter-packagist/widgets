@@ -1,3 +1,7 @@
+## 1.3.6
+
+* feat: WrapperTextButton文本居中适配
+
 ## 1.3.5
 
 * feat: WrapperVisibilityDetector的曝光逻辑，内容高度超出可见窗口的高度时，视为可见

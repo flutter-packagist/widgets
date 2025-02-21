@@ -1,3 +1,11 @@
+## 1.3.8
+
+* feat: WrapperTextButton文本居中适配
+
+## 1.3.7
+
+* feat: WrapperTextButton文本居中适配
+
 ## 1.3.6
 
 * feat: WrapperTextButton文本居中适配

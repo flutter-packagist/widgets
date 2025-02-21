@@ -138,13 +138,27 @@ class WrapperTextButton extends StatelessWidget {
       TextScaler textScaler = MediaQuery.of(context).textScaler;
       String scaleText = textScaler.toString();
       double scaleFactor = scaleText.getScaleFactor;
+      EdgeInsetsGeometry padding = scaledPadding(context);
       // 如果文本高度大于按钮设定的高度，向上偏移文本
       if (height != null && textHeight > height!) {
         shrinkWrap = true;
         offset = Offset(0, (height! - textHeight) * 0.8);
+      } else if (height != null && textHeight > height! - padding.vertical) {
+        shrinkWrap = true;
+        if (!text.isChinese) {
+          offset = Offset(0, (0.4 * log(pow(scaleFactor, 2) * 12)));
+          if (text.isContainChinese) {
+            offset = Offset(0, (0.1 * log(pow(scaleFactor, 2) * 10)));
+          }
+        } else {
+          offset = Offset(0, -(0.1 * log(pow(scaleFactor, 2) * 10)));
+        }
       } else if (text.isContainChinese) {
         // 如果是中文，向下偏移文本（随着字体大小的增加，增速变快）
-        offset = Offset(0, -(0.1 + 0.4 * pow(scaleFactor, 5)));
+        offset = Offset(0, -(0.1 + 0.2 * pow(scaleFactor, 5)));
+        if (text.isChinese) {
+          offset = offset.translate(0, -(0.7 * log(pow(scaleFactor, 2) * 4)));
+        }
       } else if (text.isEnglishOrDigits) {
         // 如果是中文，向上偏移文本（随着字体大小的增加，增速变慢）
         offset = Offset(0, (0.1 * log(pow(scaleFactor, 2) * 12)));
@@ -168,7 +182,6 @@ class WrapperTextButton extends StatelessWidget {
         );
       }
     }
-
     if (this.child != null) {
       child = this.child!;
     }
@@ -282,6 +295,21 @@ class WrapperTextButton extends StatelessWidget {
 
   WidgetStateProperty<T>? resolve<T>(T value) {
     return value == null ? null : WidgetStateProperty.all<T>(value);
+  }
+
+  EdgeInsetsGeometry scaledPadding(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final double defaultFontSize = theme.textTheme.labelLarge?.fontSize ?? 14.0;
+    final double effectiveTextScale =
+        MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
+    return ButtonStyleButton.scaledPadding(
+      theme.useMaterial3
+          ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
+          : const EdgeInsets.all(8),
+      const EdgeInsets.symmetric(horizontal: 8),
+      const EdgeInsets.symmetric(horizontal: 4),
+      effectiveTextScale,
+    );
   }
 }
 

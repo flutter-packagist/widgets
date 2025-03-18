@@ -224,31 +224,32 @@ class _TabStyle extends AnimatedWidget {
 
   MaterialStateColor _resolveWithLabelColor(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
-    final TabBarTheme tabBarTheme = TabBarTheme.of(context);
+    final TabBarThemeData tabBarTheme = TabBarTheme.of(context);
     final Animation<double> animation = listenable as Animation<double>;
 
     // labelStyle.color (and tabBarTheme.labelStyle.color) is not considered
     // as it'll be a breaking change without a possible migration plan. for
     // details: https://github.com/flutter/flutter/pull/109541#issuecomment-1294241417
-    Color selectedColor = labelColor
-        ?? tabBarTheme.labelColor
-        ?? labelStyle?.color
-        ?? tabBarTheme.labelStyle?.color
-        ?? defaults.labelColor!;
+    Color selectedColor = labelColor ??
+        tabBarTheme.labelColor ??
+        labelStyle?.color ??
+        tabBarTheme.labelStyle?.color ??
+        defaults.labelColor!;
 
     final Color unselectedColor;
 
     if (selectedColor is MaterialStateColor) {
       unselectedColor = selectedColor.resolve(const <MaterialState>{});
-      selectedColor = selectedColor.resolve(const <MaterialState>{MaterialState.selected});
+      selectedColor =
+          selectedColor.resolve(const <MaterialState>{MaterialState.selected});
     } else {
       // unselectedLabelColor and tabBarTheme.unselectedLabelColor are ignored
       // when labelColor is a MaterialStateColor.
-      unselectedColor = unselectedLabelColor
-          ?? tabBarTheme.unselectedLabelColor
-          ?? unselectedLabelStyle?.color
-          ?? tabBarTheme.unselectedLabelStyle?.color
-          ?? (themeData.useMaterial3
+      unselectedColor = unselectedLabelColor ??
+          tabBarTheme.unselectedLabelColor ??
+          unselectedLabelStyle?.color ??
+          tabBarTheme.unselectedLabelStyle?.color ??
+          (themeData.useMaterial3
               ? defaults.unselectedLabelColor!
               : selectedColor.withAlpha(0xB2)); // 70% alpha
     }
@@ -263,7 +264,7 @@ class _TabStyle extends AnimatedWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TabBarTheme tabBarTheme = TabBarTheme.of(context);
+    final TabBarThemeData tabBarTheme = TabBarTheme.of(context);
     final Animation<double> animation = listenable as Animation<double>;
 
     final Set<MaterialState> states = isSelected
@@ -274,15 +275,14 @@ class _TabStyle extends AnimatedWidget {
     // the same value of inherit. Force that to be inherit=true here.
     // To enable TextStyle.lerp(style1, style2, value), both styles must have
     // the same value of inherit. Force that to be inherit=true here.
-    final TextStyle selectedStyle = (labelStyle
-        ?? tabBarTheme.labelStyle
-        ?? defaults.labelStyle!
-    ).copyWith(inherit: true);
-    final TextStyle unselectedStyle = (unselectedLabelStyle
-        ?? tabBarTheme.unselectedLabelStyle
-        ?? labelStyle
-        ?? defaults.unselectedLabelStyle!
-    ).copyWith(inherit: true);
+    final TextStyle selectedStyle =
+        (labelStyle ?? tabBarTheme.labelStyle ?? defaults.labelStyle!)
+            .copyWith(inherit: true);
+    final TextStyle unselectedStyle = (unselectedLabelStyle ??
+            tabBarTheme.unselectedLabelStyle ??
+            labelStyle ??
+            defaults.unselectedLabelStyle!)
+        .copyWith(inherit: true);
     final TextStyle textStyle = isSelected
         ? TextStyle.lerp(selectedStyle, unselectedStyle, animation.value)!
         : TextStyle.lerp(unselectedStyle, selectedStyle, animation.value)!;
@@ -293,7 +293,8 @@ class _TabStyle extends AnimatedWidget {
     double? fontSize;
     if (needTextScale) {
       fontSize = unselectedStyle.fontSize;
-      final double magnification = selectedStyle.fontSize! / unselectedStyle.fontSize!;
+      final double magnification =
+          selectedStyle.fontSize! / unselectedStyle.fontSize!;
       final double? scale = isSelected
           ? lerpDouble(magnification, 1, animation.value)
           : lerpDouble(1, magnification, animation.value);
@@ -445,8 +446,8 @@ class _DividerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_DividerPainter oldDelegate) {
-    return oldDelegate.dividerColor != dividerColor
-        || oldDelegate.dividerHeight != dividerHeight;
+    return oldDelegate.dividerColor != dividerColor ||
+        oldDelegate.dividerHeight != dividerHeight;
   }
 }
 
@@ -757,7 +758,7 @@ class _WrapperTabBarState extends State<WrapperTabBar> {
 
   Decoration _getIndicator(TabBarIndicatorSize indicatorSize) {
     final ThemeData theme = Theme.of(context);
-    final TabBarTheme tabBarTheme = TabBarTheme.of(context);
+    final TabBarThemeData tabBarTheme = TabBarTheme.of(context);
 
     if (widget.indicator != null) {
       return widget.indicator!;
@@ -766,7 +767,9 @@ class _WrapperTabBarState extends State<WrapperTabBar> {
       return tabBarTheme.indicator!;
     }
 
-    Color color = widget.indicatorColor ?? tabBarTheme.indicatorColor ?? _defaults.indicatorColor!;
+    Color color = widget.indicatorColor ??
+        tabBarTheme.indicatorColor ??
+        _defaults.indicatorColor!;
     // ThemeData tries to avoid this by having indicatorColor avoid being the
     // primaryColor. However, it's possible that the tab bar is on a
     // Material that isn't the primaryColor. In that case, if the indicator
@@ -853,23 +856,31 @@ class _WrapperTabBarState extends State<WrapperTabBar> {
 
   void _initIndicatorPainter() {
     final ThemeData theme = Theme.of(context);
-    final TabBarTheme tabBarTheme = TabBarTheme.of(context);
+    final TabBarThemeData tabBarTheme = TabBarTheme.of(context);
     final TabBarIndicatorSize indicatorSize = widget.indicatorSize ??
         tabBarTheme.indicatorSize ??
         _defaults.indicatorSize!;
 
-    _indicatorPainter = !_controllerIsValid ? null : _IndicatorPainter(
-      controller: _controller!,
-      indicator: _getIndicator(indicatorSize),
-      indicatorSize: widget.indicatorSize ?? tabBarTheme.indicatorSize ?? _defaults.indicatorSize!,
-      indicatorPadding: widget.indicatorPadding,
-      tabKeys: _tabKeys,
-      old: _indicatorPainter,
-      labelPaddings: _labelPaddings,
-      dividerColor: widget.dividerColor ?? tabBarTheme.dividerColor ?? _defaults.dividerColor,
-      dividerHeight: widget.dividerHeight ?? tabBarTheme.dividerHeight ?? _defaults.dividerHeight,
-      showDivider: theme.useMaterial3 && !widget.isScrollable,
-    );
+    _indicatorPainter = !_controllerIsValid
+        ? null
+        : _IndicatorPainter(
+            controller: _controller!,
+            indicator: _getIndicator(indicatorSize),
+            indicatorSize: widget.indicatorSize ??
+                tabBarTheme.indicatorSize ??
+                _defaults.indicatorSize!,
+            indicatorPadding: widget.indicatorPadding,
+            tabKeys: _tabKeys,
+            old: _indicatorPainter,
+            labelPaddings: _labelPaddings,
+            dividerColor: widget.dividerColor ??
+                tabBarTheme.dividerColor ??
+                _defaults.dividerColor,
+            dividerHeight: widget.dividerHeight ??
+                tabBarTheme.dividerHeight ??
+                _defaults.dividerHeight,
+            showDivider: theme.useMaterial3 && !widget.isScrollable,
+          );
   }
 
   @override
@@ -1093,7 +1104,7 @@ class _WrapperTabBarState extends State<WrapperTabBar> {
     assert(debugCheckHasMaterialLocalizations(context));
     assert(_debugScheduleCheckHasValidTabsCount());
     final ThemeData theme = Theme.of(context);
-    final TabBarTheme tabBarTheme = TabBarTheme.of(context);
+    final TabBarThemeData tabBarTheme = TabBarTheme.of(context);
     final TabAlignment effectiveTabAlignment = widget.tabAlignment ??
         tabBarTheme.tabAlignment ??
         _defaults.tabAlignment!;
@@ -1260,9 +1271,11 @@ class _WrapperTabBarState extends State<WrapperTabBar> {
     );
 
     if (widget.isScrollable) {
-      final EdgeInsetsGeometry? effectivePadding = effectiveTabAlignment == TabAlignment.startOffset
-          ? const EdgeInsetsDirectional.only(start: _kStartOffset).add(widget.padding ?? EdgeInsets.zero)
-          : widget.padding;
+      final EdgeInsetsGeometry? effectivePadding =
+          effectiveTabAlignment == TabAlignment.startOffset
+              ? const EdgeInsetsDirectional.only(start: _kStartOffset)
+                  .add(widget.padding ?? EdgeInsets.zero)
+              : widget.padding;
       _scrollController ??= _TabBarScrollController(this);
       tabBar = ScrollConfiguration(
         // The scrolling tabs should not show an overscroll indicator.
@@ -1287,11 +1300,17 @@ class _WrapperTabBarState extends State<WrapperTabBar> {
           case TabAlignment.fill:
             effectiveAlignment = AlignmentDirectional.centerStart;
             break;
-        };
+        }
+        ;
 
-        final Color dividerColor = widget.dividerColor ?? tabBarTheme.dividerColor ?? _defaults.dividerColor!;
-        final double dividerHeight = widget.dividerHeight ?? tabBarTheme.dividerHeight ?? _defaults.dividerHeight!;
-        final bool showDivider = dividerColor != Colors.transparent && dividerHeight > 0;
+        final Color dividerColor = widget.dividerColor ??
+            tabBarTheme.dividerColor ??
+            _defaults.dividerColor!;
+        final double dividerHeight = widget.dividerHeight ??
+            tabBarTheme.dividerHeight ??
+            _defaults.dividerHeight!;
+        final bool showDivider =
+            dividerColor != Colors.transparent && dividerHeight > 0;
 
         tabBar = Align(
           heightFactor: 1.0,
@@ -1303,8 +1322,12 @@ class _WrapperTabBarState extends State<WrapperTabBar> {
         if (showDivider) {
           tabBar = CustomPaint(
             painter: _DividerPainter(
-              dividerColor: widget.dividerColor ?? tabBarTheme.dividerColor ?? _defaults.dividerColor!,
-              dividerHeight: widget.dividerHeight ?? tabBarTheme.dividerHeight ?? _defaults.dividerHeight!,
+              dividerColor: widget.dividerColor ??
+                  tabBarTheme.dividerColor ??
+                  _defaults.dividerColor!,
+              dividerHeight: widget.dividerHeight ??
+                  tabBarTheme.dividerHeight ??
+                  _defaults.dividerHeight!,
             ),
             child: tabBar,
           );

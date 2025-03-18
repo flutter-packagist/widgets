@@ -1,3 +1,7 @@
+## 1.3.9
+
+* feat: 更新Flutter版本至3.27.4
+
 ## 1.3.8
 
 * feat: WrapperTextButton文本居中适配

@@ -4,13 +4,13 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
+  sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  waterfall_flow: 3.1.0
-  packagist_network: 1.2.2
+  waterfall_flow: 3.1.1
+  packagist_network: 1.2.3
   packagist_widgets:
     path: ../
 

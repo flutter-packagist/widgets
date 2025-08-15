@@ -1,3 +1,7 @@
+## 1.3.11
+
+* fix: LateInitializationError: Field 'requestUrl' has not been initialized.
+
 ## 1.3.10
 
 * feat: 依赖库升级

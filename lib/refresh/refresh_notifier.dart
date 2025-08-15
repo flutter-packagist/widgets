@@ -22,7 +22,7 @@ class RefreshNotifier<T> {
   );
 
   /// 请求链接
-  late String requestUrl;
+  String? requestUrl;
 
   /// 请求参数
   Map<String, dynamic>? requestParams;
@@ -90,8 +90,9 @@ class RefreshNotifier<T> {
   Future refresh() async {
     onBegin?.call(false);
     page = 1;
+    if (requestUrl == null) return;
     await HttpRequest().get(
-      requestUrl,
+      requestUrl!,
       params: commonParams,
       options: requestOptions,
       cancelToken: cancelToken,
@@ -121,8 +122,9 @@ class RefreshNotifier<T> {
   /// 加载更多
   Future loadMore() async {
     onBegin?.call(true);
+    if (requestUrl == null) return;
     await HttpRequest().get(
-      requestUrl,
+      requestUrl!,
       params: commonParams,
       options: requestOptions,
       cancelToken: cancelToken,

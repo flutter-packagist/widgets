@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   waterfall_flow: 3.1.1
+  cached_network_image: ^3.4.1   # 网络图片加载
   packagist_network: 1.2.3
   packagist_widgets:
     path: ../

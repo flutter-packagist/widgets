@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'bubble_box_demo.dart';
 import 'easy_refresh_demo.dart';
+import 'label_image_demo.dart';
 import 'network_image_demo.dart';
 import 'sliver_demo.dart';
 import 'sliver_easy_refresh_demo.dart';
@@ -52,6 +53,7 @@ Map<String, Widget> routes = {
   "气泡框": const BubbleBoxDemo(),
   "可见性": const VisibilityDetectorDemo(),
   "文本高度对比": const TextHeightDemo(),
+  "网络图片附加标签": const LabelImageDemo(),
 };
 
 class DemoPage extends StatelessWidget {

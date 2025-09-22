@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:packagist_widgets/widgets.dart';
@@ -11,6 +13,16 @@ class LabelImageDemo extends StatefulWidget {
 
 class _LabelImageDemoState extends State<LabelImageDemo> {
   List<ImageBlock> images = [
+    ImageBlock(
+      image:
+          "https://cp4.100.com.tw/images/works/202408/20/api_2131628_1724146396_Uw3N5p3p0l.jpg!10961t1500-v2.jpg",
+      fit: BoxFit.contain,
+      labels: [
+        LabelItem(name: "吊柜", percentX: 0.75, percentY: 0.4),
+        LabelItem(name: "艺术画", percentX: 0.45, percentY: 0.5),
+        LabelItem(name: "沙发", percentX: 0.35, percentY: 0.7),
+      ],
+    ),
     ImageBlock(
       image:
           "https://cp4.100.com.tw/images/works/202408/20/api_2131628_1724146396_Uw3N5p3p0l.jpg!10961t1500-v2.jpg",
@@ -64,13 +76,20 @@ class _LabelImageDemoState extends State<LabelImageDemo> {
           imageUrl: images[i].image,
           labels: images[i].labels,
           fit: images[i].fit,
+          labelDirection: i == 1 ? Axis.horizontal : Axis.vertical,
+          labelBorder: Border.all(color: Colors.white, width: 1.5),
         ),
         const SizedBox(height: 20),
         WrapperLabelImage(
           height: 200,
           imageUrl: images[i].image,
           labels: images[i].labels,
+          textStyle: const TextStyle(color: Colors.white, fontSize: 12),
           fit: images[i].fit,
+          labelDirection: i == 1 ? Axis.horizontal : Axis.vertical,
+          labelBorder: Border.all(color: Colors.white, width: 1),
+          labelPadding:
+              const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
         ),
         const SizedBox(height: 20),
         WrapperLabelImage(
@@ -78,7 +97,12 @@ class _LabelImageDemoState extends State<LabelImageDemo> {
           height: 250,
           imageUrl: images[i].image,
           labels: images[i].labels,
+          textStyle: const TextStyle(color: Colors.white, fontSize: 10),
           fit: images[i].fit,
+          labelDirection: i == 1 ? Axis.horizontal : Axis.vertical,
+          labelBorder: Border.all(color: Colors.white, width: 0.5),
+          labelPadding:
+              const EdgeInsets.symmetric(horizontal: 5, vertical: 0.5),
         ),
         const SizedBox(height: 20),
       ]);
@@ -126,6 +150,11 @@ class LabelItem {
 class WrapperLabelImage extends StatefulWidget {
   final String imageUrl;
   final List<LabelItem> labels;
+  final TextStyle? textStyle;
+  final TextScaler? textScaler;
+  final Axis labelDirection;
+  final BoxBorder? labelBorder;
+  final EdgeInsets? labelPadding;
   final Map<String, String>? httpHeaders;
   final ImageWidgetBuilder? imageBuilder;
   final Widget? defaultPlaceholder;
@@ -158,6 +187,11 @@ class WrapperLabelImage extends StatefulWidget {
     super.key,
     required this.imageUrl,
     required this.labels,
+    this.textStyle,
+    this.textScaler = TextScaler.noScaling,
+    this.labelDirection = Axis.vertical,
+    this.labelBorder,
+    this.labelPadding,
     this.httpHeaders,
     this.imageBuilder,
     this.defaultPlaceholder,
@@ -192,15 +226,20 @@ class WrapperLabelImage extends StatefulWidget {
 }
 
 class _WrapperLabelImageState extends State<WrapperLabelImage> {
+  Timer? _timer;
   bool _imageTap = false;
   bool _isLoading = true;
-  final Map<String, Size> _labelWidths = {};
+  final Map<String, Size> _labelSize = {};
   final Map<String, bool> _labelVisible = {};
-  final Map<String, bool> _labelLeftToRight = {};
+  final Map<String, bool> _labelStartToEnd = {};
   final Map<String, Offset> _labelPositions = {};
   final Map<String, double> _labelDotAnimations = {};
   final Map<String, double> _labelAnimations = {};
   final Map<String, bool> _loadingImage = {};
+  final TextStyle textStyle =
+      const TextStyle(color: Colors.white, fontSize: 14);
+  final EdgeInsets labelPadding =
+      const EdgeInsets.symmetric(horizontal: 8, vertical: 1);
 
   @override
   void initState() {
@@ -219,9 +258,16 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
     }
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _timer = null;
+    super.dispose();
+  }
+
   void _loadImage() {
-    _labelWidths.clear();
-    _labelLeftToRight.clear();
+    _labelSize.clear();
+    _labelStartToEnd.clear();
     _labelPositions.clear();
     _labelDotAnimations.clear();
     _labelAnimations.clear();
@@ -276,6 +322,8 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
           }
         }
 
+        double borderSize = widget.labelBorder?.top.width ?? 0;
+
         for (final label in widget.labels) {
           double minTop = 0, maxTop = imageSize.height;
           double minLeft = 0, maxLeft = imageSize.width;
@@ -294,49 +342,83 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
 
           // Calculate the size of the label text
           Size textSize = calculateTextSize(
-              label.name, const TextStyle(color: Colors.white, fontSize: 14));
-          Size labelSize = Size(textSize.width + 44, textSize.height + 6);
-
-          if (left < minLeft ||
-              left > maxLeft ||
-              top - labelSize.height / 2 < minTop ||
-              top + labelSize.height / 2 > maxTop) {
-            continue; // Skip labels that are out of bounds
-          }
-
-          // Adjust the position of the label
-          bool leftToRight = true;
-          if (left > imageSize.width / 2) {
-            leftToRight = false;
-          }
-
-          _labelWidths[label.name] = Size(
-            textSize.width + 20,
-            textSize.height + 4,
+            label.name,
+            widget.textStyle ?? textStyle,
+            textScaler: widget.textScaler,
           );
-          _labelVisible[label.name] = true;
-          _labelLeftToRight[label.name] = leftToRight;
-          _labelDotAnimations[label.name] = 0;
-          _labelAnimations[label.name] = 0;
-          _labelPositions[label.name] = Offset(
-            left - minLeft - (leftToRight ? 10 : labelSize.width - 14),
-            top - minTop - labelSize.height / 2,
-          );
+
+          if (widget.labelDirection == Axis.vertical) {
+            Size labelSize = Size(
+              textSize.width + labelPadding.horizontal + borderSize,
+              textSize.height + labelPadding.vertical + borderSize,
+            );
+
+            if (left - labelSize.width / 2 < minLeft ||
+                left + labelSize.width / 2 > maxLeft ||
+                top < minTop ||
+                top > maxTop) {
+              continue; // Skip labels that are out of bounds
+            }
+
+            // Adjust the position of the label
+            bool topToBottom = true;
+            if (top > imageSize.height / 2) {
+              topToBottom = false;
+            }
+
+            _labelSize[label.name] = labelSize;
+            _labelVisible[label.name] = true;
+            _labelStartToEnd[label.name] = topToBottom;
+            _labelDotAnimations[label.name] = 0;
+            _labelAnimations[label.name] = 0;
+            _labelPositions[label.name] = Offset(
+              left - minLeft - labelSize.width / 2,
+              top - minTop - labelSize.height + (topToBottom ? 16 : -10),
+            );
+          } else {
+            Size labelSize = Size(
+              textSize.width + labelPadding.horizontal + borderSize,
+              textSize.height + labelPadding.vertical + borderSize,
+            );
+
+            if (left < minLeft ||
+                left > maxLeft ||
+                top - labelSize.height / 2 < minTop ||
+                top + labelSize.height / 2 > maxTop) {
+              continue; // Skip labels that are out of bounds
+            }
+
+            // Adjust the position of the label
+            bool leftToRight = true;
+            if (left > imageSize.width / 2) {
+              leftToRight = false;
+            }
+
+            _labelSize[label.name] = labelSize;
+            _labelVisible[label.name] = true;
+            _labelStartToEnd[label.name] = leftToRight;
+            _labelDotAnimations[label.name] = 0;
+            _labelAnimations[label.name] = 0;
+            _labelPositions[label.name] = Offset(
+              left - minLeft - (leftToRight ? 9 : labelSize.width - 14),
+              top - minTop - labelSize.height / 2,
+            );
+          }
           _loadingImage[label.name] = true;
         }
         setState(() {});
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          Future.delayed(const Duration(milliseconds: 300), onImageTap);
+          _timer = Timer(const Duration(milliseconds: 300), onImageTap);
         });
       });
     });
     imageStream.addListener(listener);
   }
 
-  Widget labelWidget(LabelItem label, bool leftToRight) {
+  Widget labelVerticalWidget(LabelItem label, bool topToBottom) {
     Widget dot = AnimatedScale(
       scale: _labelDotAnimations[label.name] ?? 0,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 100),
       onEnd: () {
         if (_imageTap) return;
         if (_labelDotAnimations[label.name] == 1) {
@@ -347,13 +429,13 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
         setState(() {});
       },
       child: Container(
-        width: 20,
-        height: 20,
+        width: 18,
+        height: 18,
         decoration: BoxDecoration(
-          color: Colors.black38,
+          color: Colors.black.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(10),
         ),
-        padding: const EdgeInsets.all(6),
+        padding: const EdgeInsets.all(5),
         child: Container(
           width: 8,
           height: 8,
@@ -369,7 +451,121 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
       opacity: _labelAnimations[label.name] ?? 0,
       duration: const Duration(milliseconds: 200),
       child: Transform.translate(
-        offset: Offset(leftToRight ? -10 : -26, 0),
+        offset: Offset(0, topToBottom ? -10 : -25),
+        child: Container(
+          width: 1,
+          height: 16,
+          color: Colors.white,
+        ),
+      ),
+    );
+
+    Widget text = Transform.translate(
+      offset: Offset(0, topToBottom ? -10 : -6),
+      child: Container(
+        padding: widget.labelPadding ?? labelPadding,
+        decoration: BoxDecoration(
+          color: _labelAnimations[label.name] == 1
+              ? Colors.black.withValues(alpha: 0.6)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: widget.labelBorder ?? Border.all(color: Colors.white),
+        ),
+        child: ColoredBox(
+          color: Colors.red,
+          child: Text(
+            label.name,
+            style: widget.textStyle ?? textStyle,
+            textScaler: widget.textScaler,
+            maxLines: 1,
+          ),
+        ),
+      ),
+    );
+
+    // Widget text = AnimatedContainer(
+    //   height: (_labelAnimations[label.name] ?? 0) *
+    //       (_labelSize[label.name]?.height ?? 0),
+    //   duration: const Duration(milliseconds: 250),
+    //   child: Transform.translate(
+    //     offset: Offset(0, topToBottom ? -10 : -6),
+    //     child: Container(
+    //       padding: widget.labelPadding ?? labelPadding,
+    //       decoration: BoxDecoration(
+    //         color: _labelAnimations[label.name] == 1
+    //             ? Colors.black.withValues(alpha: 0.6)
+    //             : Colors.transparent,
+    //         borderRadius: BorderRadius.circular(20),
+    //         border: widget.labelBorder ?? Border.all(color: Colors.white),
+    //       ),
+    //       child: ColoredBox(
+    //         color: Colors.red,
+    //         child: Text(
+    //           label.name,
+    //           style: widget.textStyle ?? textStyle,
+    //           textScaler: widget.textScaler,
+    //           maxLines: 1,
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
+
+    Widget placeholder = AnimatedContainer(
+      height: (1 - (_labelAnimations[label.name] ?? 1)) *
+          (_labelSize[label.name]?.height ?? 0),
+      duration: const Duration(milliseconds: 250),
+      child: const SizedBox(),
+    );
+
+    return GestureDetector(
+      onTap: () {
+        _labelDotAnimations[label.name] = 0;
+        setState(() {});
+      },
+      child: topToBottom
+          ? Column(children: [dot, line, text])
+          : Column(children: [placeholder, text, dot, line]),
+    );
+  }
+
+  Widget labelHorizontalWidget(LabelItem label, bool leftToRight) {
+    Widget dot = AnimatedScale(
+      scale: _labelDotAnimations[label.name] ?? 0,
+      duration: const Duration(milliseconds: 100),
+      onEnd: () {
+        if (_imageTap) return;
+        if (_labelDotAnimations[label.name] == 1) {
+          _labelAnimations[label.name] =
+              _labelAnimations[label.name] == 1 ? 0 : 1;
+        }
+        _labelDotAnimations[label.name] = 1;
+        setState(() {});
+      },
+      child: Container(
+        width: 18,
+        height: 18,
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.all(5),
+        child: Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+      ),
+    );
+
+    Widget line = AnimatedOpacity(
+      opacity: _labelAnimations[label.name] ?? 0,
+      duration: const Duration(milliseconds: 200),
+      child: Transform.translate(
+        offset: Offset(leftToRight ? -10 : -25, 0),
         child: Container(
           width: 16,
           height: 1,
@@ -380,22 +576,23 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
 
     Widget text = AnimatedContainer(
       width: (_labelAnimations[label.name] ?? 0) *
-          (_labelWidths[label.name]?.width ?? 0),
+          (_labelSize[label.name]?.width ?? 0),
       duration: const Duration(milliseconds: 250),
       child: Transform.translate(
         offset: Offset(leftToRight ? -10 : -6, 0),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          padding: widget.labelPadding ?? labelPadding,
           decoration: BoxDecoration(
             color: _labelAnimations[label.name] == 1
-                ? Colors.black38
+                ? Colors.black.withValues(alpha: 0.6)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white),
+            border: widget.labelBorder ?? Border.all(color: Colors.white),
           ),
           child: Text(
             label.name,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: widget.textStyle ?? textStyle,
+            textScaler: widget.textScaler,
             maxLines: 1,
           ),
         ),
@@ -404,7 +601,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
 
     Widget placeholder = AnimatedContainer(
       width: (1 - (_labelAnimations[label.name] ?? 1)) *
-          (_labelWidths[label.name]?.width ?? 0),
+          (_labelSize[label.name]?.width ?? 0),
       duration: const Duration(milliseconds: 250),
       child: const SizedBox(),
     );
@@ -432,14 +629,25 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
     List<Widget> labelWidgets = [];
     for (final label in widget.labels) {
       if (_labelVisible[label.name] == false) continue; // Skip invisible labels
-      bool leftToRight = _labelLeftToRight[label.name] ?? true;
-      double offsetX = _labelPositions[label.name]?.dx ?? 0;
-      double offsetY = _labelPositions[label.name]?.dy ?? 0;
-      labelWidgets.add(Positioned(
-        left: offsetX,
-        top: offsetY,
-        child: labelWidget(label, leftToRight),
-      ));
+      if (widget.labelDirection == Axis.vertical) {
+        bool topToBottom = _labelStartToEnd[label.name] ?? true;
+        double offsetX = _labelPositions[label.name]?.dx ?? 0;
+        double offsetY = _labelPositions[label.name]?.dy ?? 0;
+        labelWidgets.add(Positioned(
+          left: offsetX,
+          top: offsetY,
+          child: labelVerticalWidget(label, topToBottom),
+        ));
+      } else {
+        bool leftToRight = _labelStartToEnd[label.name] ?? true;
+        double offsetX = _labelPositions[label.name]?.dx ?? 0;
+        double offsetY = _labelPositions[label.name]?.dy ?? 0;
+        labelWidgets.add(Positioned(
+          left: offsetX,
+          top: offsetY,
+          child: labelHorizontalWidget(label, leftToRight),
+        ));
+      }
     }
     return GestureDetector(
       onTap: onImageTap,
@@ -479,6 +687,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
   Size calculateTextSize(
     String text,
     TextStyle textStyle, {
+    TextScaler? textScaler,
     double maxWidth = double.infinity,
   }) {
     // 创建文本span
@@ -492,6 +701,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
       text: textSpan,
       textDirection: TextDirection.ltr, // 文本方向
       maxLines: 1, // 最大行数，null表示不限制
+      textScaler: textScaler ?? TextScaler.noScaling,
     )..layout(maxWidth: maxWidth); // 进行布局计算
 
     // 获取计算结果
@@ -503,14 +713,22 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
 
   void onImageTap() {
     _imageTap = true;
-    bool allZero = _labelDotAnimations.values.every((e) => e == 0);
     for (var label in widget.labels) {
-      _labelDotAnimations[label.name] = allZero ? 1 : 0;
-      _labelAnimations[label.name] = allZero ? 1 : 0;
+      _labelDotAnimations[label.name] = 0;
     }
     setState(() {});
-    Future.delayed(const Duration(milliseconds: 300), () {
-      _imageTap = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _timer = Timer(const Duration(milliseconds: 200), () {
+        bool allZero = _labelAnimations.values.every((e) => e == 0);
+        for (var label in widget.labels) {
+          _labelDotAnimations[label.name] = 1;
+          _labelAnimations[label.name] = allZero ? 1 : 0;
+        }
+        setState(() {});
+        _timer = Timer(const Duration(milliseconds: 300), () {
+          _imageTap = false;
+        });
+      });
     });
   }
 }

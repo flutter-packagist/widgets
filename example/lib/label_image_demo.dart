@@ -236,6 +236,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
   final Map<String, double> _labelDotAnimations = {};
   final Map<String, double> _labelAnimations = {};
   final Map<String, bool> _loadingImage = {};
+  final Map<String, GlobalKey> _labelKeys = {};
   final TextStyle textStyle =
       const TextStyle(color: Colors.white, fontSize: 14);
   final EdgeInsets labelPadding =
@@ -341,13 +342,14 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
           _labelVisible[label.name] = false;
 
           // Calculate the size of the label text
-          Size textSize = calculateTextSize(
-            label.name,
-            widget.textStyle ?? textStyle,
-            textScaler: widget.textScaler,
-          );
+          Size textSize = (_labelKeys[label.name]
+                      ?.currentContext
+                      ?.findRenderObject() as RenderBox?)
+                  ?.size ??
+              Size.zero;
 
           if (widget.labelDirection == Axis.vertical) {
+            /// Vertical
             Size labelSize = Size(
               textSize.width + labelPadding.horizontal + borderSize,
               textSize.height + labelPadding.vertical + borderSize,
@@ -376,6 +378,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
               top - minTop - labelSize.height + (topToBottom ? 16 : -10),
             );
           } else {
+            /// Horizontal
             Size labelSize = Size(
               textSize.width + labelPadding.horizontal + borderSize,
               textSize.height + labelPadding.vertical + borderSize,
@@ -460,56 +463,34 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
       ),
     );
 
-    Widget text = Transform.translate(
-      offset: Offset(0, topToBottom ? -10 : -6),
-      child: Container(
-        padding: widget.labelPadding ?? labelPadding,
-        decoration: BoxDecoration(
-          color: _labelAnimations[label.name] == 1
-              ? Colors.black.withValues(alpha: 0.6)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          border: widget.labelBorder ?? Border.all(color: Colors.white),
-        ),
-        child: ColoredBox(
-          color: Colors.red,
-          child: Text(
-            label.name,
-            style: widget.textStyle ?? textStyle,
-            textScaler: widget.textScaler,
-            maxLines: 1,
+    Widget text = AnimatedContainer(
+      height: (_labelAnimations[label.name] ?? 0) *
+          (_labelSize[label.name]?.height ?? 0),
+      duration: const Duration(milliseconds: 250),
+      child: Transform.translate(
+        offset: Offset(0, topToBottom ? -10 : -6),
+        child: Container(
+          key: _labelKeys[label.name],
+          padding: widget.labelPadding ?? labelPadding,
+          decoration: BoxDecoration(
+            color: _labelAnimations[label.name] == 1
+                ? Colors.black.withValues(alpha: 0.6)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
+            border: widget.labelBorder ?? Border.all(color: Colors.white),
+          ),
+          child: ColoredBox(
+            color: Colors.red,
+            child: Text(
+              label.name,
+              style: widget.textStyle ?? textStyle,
+              textScaler: widget.textScaler,
+              maxLines: 1,
+            ),
           ),
         ),
       ),
     );
-
-    // Widget text = AnimatedContainer(
-    //   height: (_labelAnimations[label.name] ?? 0) *
-    //       (_labelSize[label.name]?.height ?? 0),
-    //   duration: const Duration(milliseconds: 250),
-    //   child: Transform.translate(
-    //     offset: Offset(0, topToBottom ? -10 : -6),
-    //     child: Container(
-    //       padding: widget.labelPadding ?? labelPadding,
-    //       decoration: BoxDecoration(
-    //         color: _labelAnimations[label.name] == 1
-    //             ? Colors.black.withValues(alpha: 0.6)
-    //             : Colors.transparent,
-    //         borderRadius: BorderRadius.circular(20),
-    //         border: widget.labelBorder ?? Border.all(color: Colors.white),
-    //       ),
-    //       child: ColoredBox(
-    //         color: Colors.red,
-    //         child: Text(
-    //           label.name,
-    //           style: widget.textStyle ?? textStyle,
-    //           textScaler: widget.textScaler,
-    //           maxLines: 1,
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
 
     Widget placeholder = AnimatedContainer(
       height: (1 - (_labelAnimations[label.name] ?? 1)) *
@@ -581,6 +562,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
       child: Transform.translate(
         offset: Offset(leftToRight ? -10 : -6, 0),
         child: Container(
+          key: _labelKeys[label.name],
           padding: widget.labelPadding ?? labelPadding,
           decoration: BoxDecoration(
             color: _labelAnimations[label.name] == 1
@@ -629,6 +611,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
     List<Widget> labelWidgets = [];
     for (final label in widget.labels) {
       if (_labelVisible[label.name] == false) continue; // Skip invisible labels
+      _labelKeys[label.name] = GlobalKey();
       if (widget.labelDirection == Axis.vertical) {
         bool topToBottom = _labelStartToEnd[label.name] ?? true;
         double offsetX = _labelPositions[label.name]?.dx ?? 0;
@@ -682,33 +665,6 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
         ...labelWidgets,
       ]),
     );
-  }
-
-  Size calculateTextSize(
-    String text,
-    TextStyle textStyle, {
-    TextScaler? textScaler,
-    double maxWidth = double.infinity,
-  }) {
-    // 创建文本span
-    final TextSpan textSpan = TextSpan(
-      text: text,
-      style: textStyle,
-    );
-
-    // 创建TextPainter
-    final TextPainter textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr, // 文本方向
-      maxLines: 1, // 最大行数，null表示不限制
-      textScaler: textScaler ?? TextScaler.noScaling,
-    )..layout(maxWidth: maxWidth); // 进行布局计算
-
-    // 获取计算结果
-    final double textWidth = textPainter.size.width;
-    final double textHeight = textPainter.size.height;
-
-    return Size(textWidth, textHeight);
   }
 
   void onImageTap() {

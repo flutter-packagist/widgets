@@ -1,130 +1,9 @@
 import 'dart:async';
 
-import 'package:extended_image/extended_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import 'label_image.dart';
-
-typedef DoubleClickAnimationListener = void Function();
-
-class LabelImageBrowser extends StatefulWidget {
-  final ExtendedPageController? controller;
-  final int index;
-  final List<ImageBlock> images;
-  final ValueChanged<int>? onPageChanged;
-  final bool enableSlideOutPage;
-  final String? heroTag;
-
-  const LabelImageBrowser({
-    super.key,
-    this.controller,
-    this.index = 0,
-    required this.images,
-    this.onPageChanged,
-    this.enableSlideOutPage = true,
-    this.heroTag,
-  });
-
-  @override
-  State<LabelImageBrowser> createState() => _LabelImageBrowserState();
-}
-
-class _LabelImageBrowserState extends State<LabelImageBrowser>
-    with TickerProviderStateMixin {
-  final GlobalKey<ExtendedImageSlidePageState> slidePageKey =
-      GlobalKey<ExtendedImageSlidePageState>();
-  Animation<double>? bgAnimation;
-  AnimationController? bgAnimationController;
-  double bgOpacity = 1.0;
-
-  @override
-  void initState() {
-    super.initState();
-    bgAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    bgAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(bgAnimationController!)
-          ..addListener(() {
-            bgOpacity = bgAnimation!.value;
-            setState(() {});
-          });
-    bgAnimationController?.forward();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return imageSlidePage;
-  }
-
-  Widget get imageSlidePage {
-    return ExtendedImageSlidePage(
-      key: slidePageKey,
-      child: ColoredBox(
-        color: Colors.black.withValues(alpha: bgOpacity),
-        child: imagePageView,
-      ),
-      slidePageBackgroundHandler: (Offset offset, Size size) {
-        return Colors.transparent;
-      },
-      slideOffsetHandler: (
-        Offset offset, {
-        ExtendedImageSlidePageState? state,
-      }) {
-        if (offset.dy.abs() < offset.dx.abs() * 1.5) return Offset.zero;
-        double height = MediaQuery.of(context).size.height;
-        bgOpacity = (height - offset.dy.abs()) / height;
-        if (bgOpacity > 1) bgOpacity = 1;
-        if (bgOpacity < 0) bgOpacity = 0;
-        setState(() {});
-        return null;
-      },
-      slideEndHandler: (
-        Offset offset, {
-        ScaleEndDetails? details,
-        ExtendedImageSlidePageState? state,
-      }) {
-        bgOpacity = 1;
-        setState(() {});
-        return null;
-      },
-    );
-  }
-
-  Widget get imagePageView {
-    return ExtendedImageGesturePageView.builder(
-      controller: widget.controller ??
-          ExtendedPageController(initialPage: widget.index),
-      physics: const BouncingScrollPhysics(),
-      scrollDirection: Axis.horizontal,
-      itemCount: widget.images.length,
-      itemBuilder: (BuildContext context, int index) {
-        Widget child = imageItem(index);
-        return child;
-      },
-      onPageChanged: widget.onPageChanged,
-    );
-  }
-
-  Widget imageItem(int index) {
-    return LabelImage(
-      imageUrl: widget.images[index].image,
-      labels: widget.images[index].labels,
-      fit: BoxFit.contain,
-      slidePageKey: slidePageKey,
-      enableSlideOutPage: true,
-    );
-  }
-
-  @override
-  void dispose() {
-    bgAnimationController?.dispose();
-    super.dispose();
-  }
-}
-
-class LabelImage extends StatefulWidget {
+class WrapperLabelImage extends StatefulWidget {
   final String imageUrl;
   final List<LabelItem> labels;
   final TextStyle? textStyle;
@@ -132,39 +11,80 @@ class LabelImage extends StatefulWidget {
   final Axis labelDirection;
   final BoxBorder? labelBorder;
   final EdgeInsets? labelPadding;
+  final Map<String, String>? httpHeaders;
+  final ImageWidgetBuilder? imageBuilder;
+  final Widget? defaultPlaceholder;
+  final PlaceholderWidgetBuilder? placeholder;
+  final ProgressIndicatorBuilder? progressIndicatorBuilder;
+  final LoadingErrorWidgetBuilder? errorWidget;
+  final Duration fadeOutDuration;
+  final Curve fadeOutCurve;
+  final Duration fadeInDuration;
+  final Curve fadeInCurve;
   final double? width;
   final double? height;
   final BoxFit? fit;
-  final bool enableSlideOutPage;
-  final String? heroTag;
-  final GlobalKey<ExtendedImageSlidePageState> slidePageKey;
+  final Alignment alignment;
+  final ImageRepeat repeat;
+  final bool matchTextDirection;
+  final bool useOldImageOnUrlChange;
+  final Color? color;
+  final FilterQuality filterQuality;
+  final BlendMode? colorBlendMode;
+  final Duration? placeholderFadeInDuration;
+  final int? memCacheWidth;
+  final int? memCacheHeight;
+  final String? cacheKey;
+  final int? maxWidthDiskCache;
+  final int? maxHeightDiskCache;
+  final bool usePlaceholder;
 
-  const LabelImage({
+  const WrapperLabelImage({
     super.key,
     required this.imageUrl,
     required this.labels,
-    required this.slidePageKey,
     this.textStyle,
     this.textScaler = TextScaler.noScaling,
     this.labelDirection = Axis.vertical,
     this.labelBorder,
     this.labelPadding,
+    this.httpHeaders,
+    this.imageBuilder,
+    this.defaultPlaceholder,
+    this.placeholder,
+    this.progressIndicatorBuilder,
+    this.errorWidget,
+    this.fadeOutDuration = const Duration(milliseconds: 1000),
+    this.fadeOutCurve = Curves.easeOut,
+    this.fadeInDuration = const Duration(milliseconds: 500),
+    this.fadeInCurve = Curves.easeIn,
     this.width,
     this.height,
-    this.fit,
-    this.enableSlideOutPage = false,
-    this.heroTag,
+    this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
+    this.repeat = ImageRepeat.noRepeat,
+    this.matchTextDirection = false,
+    this.useOldImageOnUrlChange = false,
+    this.color,
+    this.filterQuality = FilterQuality.low,
+    this.colorBlendMode,
+    this.placeholderFadeInDuration,
+    this.memCacheWidth,
+    this.memCacheHeight,
+    this.cacheKey,
+    this.maxWidthDiskCache,
+    this.maxHeightDiskCache,
+    this.usePlaceholder = true,
   });
 
   @override
-  State<LabelImage> createState() => _LabelImageState();
+  State<WrapperLabelImage> createState() => _WrapperLabelImageState();
 }
 
-class _LabelImageState extends State<LabelImage> with TickerProviderStateMixin {
+class _WrapperLabelImageState extends State<WrapperLabelImage> {
   Timer? _timer;
   bool _imageTap = false;
   bool _isLoading = true;
-  Size _imageSize = Size.zero;
   final Map<String, Size> _labelSize = {};
   final Map<String, bool> _labelVisible = {};
   final Map<String, bool> _labelStartToEnd = {};
@@ -178,23 +98,14 @@ class _LabelImageState extends State<LabelImage> with TickerProviderStateMixin {
   final EdgeInsets labelPadding =
       const EdgeInsets.symmetric(horizontal: 8, vertical: 1);
 
-  final List<double> doubleClickScales = <double>[1.0, 2.0, 3.0];
-  Animation<double>? doubleClickAnimation;
-  AnimationController? doubleClickAnimationController;
-  DoubleClickAnimationListener? doubleClickAnimationListener;
-
   @override
   void initState() {
     super.initState();
-    doubleClickAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
     _loadImage();
   }
 
   @override
-  void didUpdateWidget(covariant LabelImage oldWidget) {
+  void didUpdateWidget(covariant WrapperLabelImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.imageUrl != oldWidget.imageUrl ||
         widget.labels != oldWidget.labels ||
@@ -206,7 +117,6 @@ class _LabelImageState extends State<LabelImage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    doubleClickAnimationController?.dispose();
     _timer?.cancel();
     _timer = null;
     super.dispose();
@@ -218,7 +128,7 @@ class _LabelImageState extends State<LabelImage> with TickerProviderStateMixin {
     _labelPositions.clear();
     _labelDotAnimations.clear();
     _labelAnimations.clear();
-    final imageProvider = ExtendedNetworkImageProvider(widget.imageUrl);
+    final imageProvider = CachedNetworkImageProvider(widget.imageUrl);
     final imageStream = imageProvider.resolve(ImageConfiguration.empty);
     ImageStreamListener? listener;
     listener = ImageStreamListener((ImageInfo imageInfo, _) {
@@ -230,7 +140,6 @@ class _LabelImageState extends State<LabelImage> with TickerProviderStateMixin {
         imageInfo.image.width.toDouble(),
         imageInfo.image.height.toDouble(),
       );
-      _imageSize = imageSize;
       _isLoading = false;
       setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -502,7 +411,7 @@ class _LabelImageState extends State<LabelImage> with TickerProviderStateMixin {
     Widget text = AnimatedContainer(
       width: (_labelAnimations[label.name] ?? 0) *
           (_labelSize[label.name]?.width ?? 0),
-      height: _labelSize[label.name]?.height,
+      height: _labelSize[label.name]?.height ?? 0,
       duration: const Duration(milliseconds: 250),
       child: Transform.translate(
         offset: Offset(leftToRight ? -10 : -6, 0),
@@ -577,183 +486,39 @@ class _LabelImageState extends State<LabelImage> with TickerProviderStateMixin {
         ));
       }
     }
-    Widget image = GestureDetector(
+    return GestureDetector(
       onTap: onImageTap,
-      child: ExtendedImage.network(
-        widget.imageUrl,
-        fit: BoxFit.contain,
-        mode: ExtendedImageMode.gesture,
-        initGestureConfigHandler: (ExtendedImageState state) {
-          return GestureConfig(
-            minScale: 1.0,
-            animationMinScale: 0.5,
-            maxScale: 5.0,
-            animationMaxScale: 5.0,
-            initialScale: 1.0,
-            inPageView: true,
-            initialAlignment: InitialAlignment.center,
-            // gestureDetailsIsChanged: calculateLabelPosition,
-            gestureDetailsIsChanged: (GestureDetails? details) {
-              _labelVisible.updateAll((_, __) => details?.totalScale == 1);
-              setState(() {});
-            },
-          );
-        },
-        onDoubleTap: (ExtendedImageGestureState state) {
-          Offset? pointerDownPosition = state.pointerDownPosition;
-          double? beginScale = state.gestureDetails!.totalScale;
-          double? endScale = beginScale;
-
-          // 移除之前的动画监听
-          if (doubleClickAnimationListener != null) {
-            doubleClickAnimation?.removeListener(doubleClickAnimationListener!);
-          }
-          // 重置动画
-          doubleClickAnimationController?.stop();
-          doubleClickAnimationController?.reset();
-
-          // 根据当前缩放比例，切换到下一个缩放比例
-          if (beginScale == doubleClickScales[0]) {
-            endScale = doubleClickScales[1];
-          } else if (beginScale == doubleClickScales[1]) {
-            endScale = doubleClickScales[2];
-          } else {
-            endScale = doubleClickScales[0];
-          }
-
-          // 开始执行动画
-          doubleClickAnimation = doubleClickAnimationController
-              ?.drive(Tween<double>(begin: beginScale, end: endScale));
-          doubleClickAnimationListener = () {
-            state.handleDoubleTap(
-              scale: doubleClickAnimation?.value,
-              doubleTapPosition: pointerDownPosition,
-            );
-          };
-          doubleClickAnimation?.addListener(doubleClickAnimationListener!);
-          doubleClickAnimationController?.forward();
-        },
-        enableSlideOutPage: widget.enableSlideOutPage,
-        heroBuilderForSlidingPage: (Widget child) {
-          return HeroWidget(
-            tag: (widget.heroTag ?? "") + widget.imageUrl,
-            slidePageKey: widget.slidePageKey,
-            slideType: SlideType.onlyImage,
-            child: child,
-          );
-        },
-      ),
-    );
-    Widget child = Stack(
-      fit: StackFit.expand,
-      children: [
-        image,
-        Center(
-          child: AspectRatio(
-            aspectRatio: _imageSize.aspectRatio,
-            child: Stack(
-              children: labelWidgets,
-            ),
-          ),
+      child: Stack(children: [
+        CachedNetworkImage(
+          imageUrl: widget.imageUrl,
+          httpHeaders: widget.httpHeaders,
+          placeholder: widget.placeholder,
+          progressIndicatorBuilder: widget.progressIndicatorBuilder,
+          errorWidget: widget.errorWidget,
+          fadeOutDuration: widget.fadeOutDuration,
+          fadeOutCurve: widget.fadeOutCurve,
+          fadeInDuration: widget.fadeInDuration,
+          fadeInCurve: widget.fadeInCurve,
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          alignment: widget.alignment,
+          repeat: widget.repeat,
+          matchTextDirection: widget.matchTextDirection,
+          useOldImageOnUrlChange: widget.useOldImageOnUrlChange,
+          color: widget.color,
+          filterQuality: widget.filterQuality,
+          colorBlendMode: widget.colorBlendMode,
+          placeholderFadeInDuration: widget.placeholderFadeInDuration,
+          memCacheWidth: widget.memCacheWidth,
+          memCacheHeight: widget.memCacheHeight,
+          cacheKey: widget.cacheKey,
+          maxWidthDiskCache: widget.maxWidthDiskCache,
+          maxHeightDiskCache: widget.maxHeightDiskCache,
         ),
-      ],
+        ...labelWidgets,
+      ]),
     );
-    return child;
-  }
-
-  void calculateLabelPosition(GestureDetails? details) {
-    // double scale = details?.totalScale ?? 1;
-    Size boundSize = details?.destinationRect?.size ?? Size.zero;
-    double imageAspectRatio = _imageSize.aspectRatio;
-    double boundAspectRatio = boundSize.width / boundSize.height;
-    Size imageSize = _imageSize;
-    if (imageAspectRatio < boundAspectRatio) {
-      imageSize = Size(
-        boundSize.height / imageSize.height * imageSize.width,
-        boundSize.height,
-      );
-    } else {
-      imageSize = Size(
-        boundSize.width,
-        boundSize.width / imageSize.width * imageSize.height,
-      );
-    }
-    _labelPositions.updateAll((label, offset) {
-      var item = widget.labels.where((e) => e.name == label).firstOrNull;
-      if (item == null) return offset;
-      double minTop = 0, maxTop = imageSize.height;
-      double minLeft = 0, maxLeft = imageSize.width;
-      if (widget.height != null) {
-        minTop = imageSize.height / 2 - boundSize.height / 2;
-        maxTop = minTop + widget.height!;
-      }
-      if (widget.width != null) {
-        minLeft = imageSize.width / 2 - boundSize.width / 2;
-        maxLeft = minLeft + imageSize.width;
-      }
-      double left = imageSize.width * item.percentX;
-      double top = imageSize.height * item.percentY;
-
-      // Calculate the size of the label text
-      Size textSize = calculateTextSize(
-        item.name,
-        widget.textStyle ?? textStyle,
-        textScaler: widget.textScaler,
-      );
-      EdgeInsets padding = widget.labelPadding ?? labelPadding;
-      double borderSize = widget.labelBorder?.top.width ?? 1;
-
-      if (widget.labelDirection == Axis.vertical) {
-        /// Vertical
-        Size labelSize = Size(
-          textSize.width + padding.horizontal + borderSize + 3,
-          textSize.height + padding.vertical + borderSize + 2,
-        );
-
-        if (left - labelSize.width / 2 < minLeft ||
-            left + labelSize.width / 2 > maxLeft ||
-            top < minTop ||
-            top > maxTop) {
-          return offset; // Skip labels that are out of bounds
-        }
-
-        // Adjust the position of the label
-        bool topToBottom = true;
-        if (top > imageSize.height / 2) {
-          topToBottom = false;
-        }
-
-        return Offset(
-          left - minLeft - labelSize.width / 2,
-          top - minTop - labelSize.height + (topToBottom ? 16 : -10),
-        );
-      } else {
-        /// Horizontal
-        Size labelSize = Size(
-          textSize.width + padding.horizontal + borderSize + 3,
-          textSize.height + padding.vertical + borderSize + 2,
-        );
-
-        if (left < minLeft ||
-            left > maxLeft ||
-            top - labelSize.height / 2 < minTop ||
-            top + labelSize.height / 2 > maxTop) {
-          return offset; // Skip labels that are out of bounds
-        }
-
-        // Adjust the position of the label
-        bool leftToRight = true;
-        if (left > imageSize.width / 2) {
-          leftToRight = false;
-        }
-
-        return Offset(
-          left - minLeft - (leftToRight ? 9 : labelSize.width - 14),
-          top - minTop - labelSize.height / 2,
-        );
-      }
-    });
-    setState(() {});
   }
 
   Size calculateTextSize(
@@ -801,114 +566,14 @@ class _LabelImageState extends State<LabelImage> with TickerProviderStateMixin {
   }
 }
 
-/// make hero better when slide out
-class HeroWidget extends StatefulWidget {
-  const HeroWidget({
-    required this.child,
-    required this.tag,
-    required this.slidePageKey,
-    this.slideType = SlideType.onlyImage,
-  });
+class LabelItem {
+  final String name;
+  final double percentX;
+  final double percentY;
 
-  final Widget child;
-  final SlideType slideType;
-  final Object tag;
-  final GlobalKey<ExtendedImageSlidePageState> slidePageKey;
-
-  @override
-  _HeroWidgetState createState() => _HeroWidgetState();
-}
-
-class _HeroWidgetState extends State<HeroWidget> {
-  RectTween? _rectTween;
-
-  @override
-  Widget build(BuildContext context) {
-    return Hero(
-      tag: widget.tag,
-      createRectTween: (Rect? begin, Rect? end) {
-        _rectTween = RectTween(begin: begin, end: end);
-        return _rectTween!;
-      },
-      // make hero better when slide out
-      flightShuttleBuilder: (BuildContext flightContext,
-          Animation<double> animation,
-          HeroFlightDirection flightDirection,
-          BuildContext fromHeroContext,
-          BuildContext toHeroContext) {
-        // make hero more smoothly
-        final Hero hero = (flightDirection == HeroFlightDirection.pop
-            ? fromHeroContext.widget
-            : toHeroContext.widget) as Hero;
-        if (_rectTween == null) {
-          return hero;
-        }
-
-        if (flightDirection == HeroFlightDirection.pop) {
-          final bool fixTransform = widget.slideType == SlideType.onlyImage &&
-              (widget.slidePageKey.currentState!.offset != Offset.zero ||
-                  widget.slidePageKey.currentState!.scale != 1.0);
-
-          final Widget toHeroWidget = (toHeroContext.widget as Hero).child;
-          return AnimatedBuilder(
-            animation: animation,
-            builder: (BuildContext buildContext, Widget? child) {
-              Widget animatedBuilderChild = hero.child;
-
-              // make hero more smoothly
-              animatedBuilderChild = Stack(
-                clipBehavior: Clip.antiAlias,
-                alignment: Alignment.center,
-                children: <Widget>[
-                  Opacity(
-                    opacity: 1 - animation.value,
-                    child: SizedBox(
-                      width: _rectTween!.begin!.width,
-                      height: _rectTween!.begin!.height,
-                      child: toHeroWidget,
-                    ),
-                  ),
-                  Opacity(
-                    opacity: animation.value,
-                    child: animatedBuilderChild,
-                  )
-                ],
-              );
-
-              // fix transform when slide out
-              if (fixTransform) {
-                final Tween<Offset> offsetTween = Tween<Offset>(
-                    begin: Offset.zero,
-                    end: widget.slidePageKey.currentState!.offset);
-
-                final Tween<double> scaleTween = Tween<double>(
-                    begin: 1.0, end: widget.slidePageKey.currentState!.scale);
-                animatedBuilderChild = Transform.translate(
-                  offset: offsetTween.evaluate(animation),
-                  child: Transform.scale(
-                    scale: scaleTween.evaluate(animation),
-                    child: animatedBuilderChild,
-                  ),
-                );
-              }
-
-              return animatedBuilderChild;
-            },
-          );
-        }
-        return hero.child;
-      },
-      child: widget.child,
-    );
-  }
-}
-
-class ImageBlock {
-  final String image;
-  final List<LabelItem> labels;
-
-  ImageBlock({
-    required this.image,
-    required this.labels,
+  LabelItem({
+    required this.name,
+    required this.percentX,
+    required this.percentY,
   });
 }

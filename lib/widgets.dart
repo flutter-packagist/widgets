@@ -10,6 +10,8 @@ export 'detector/visibility_item.dart';
 export 'field/text_field.dart';
 export 'image/cached_image_widget.dart';
 export 'image/image_asset.dart';
+export 'image/image_browser.dart';
+export 'image/label_image.dart';
 export 'indicator/tab_indicator.dart';
 export 'refresh/ball/ball_pulse_indicator.dart';
 export 'refresh/refresh.dart';

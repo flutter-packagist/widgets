@@ -68,7 +68,7 @@ class WrapperTextField extends StatelessWidget {
   final ContentInsertionConfiguration? contentInsertionConfiguration;
   final Clip clipBehavior;
   final String? restorationId;
-  final bool scribbleEnabled;
+  final bool stylusHandwritingEnabled;
   final bool enableIMEPersonalizedLearning;
   final EditableTextContextMenuBuilder? contextMenuBuilder;
   final bool canRequestFocus;
@@ -134,7 +134,8 @@ class WrapperTextField extends StatelessWidget {
     this.contentInsertionConfiguration,
     this.clipBehavior = Clip.hardEdge,
     this.restorationId,
-    this.scribbleEnabled = false,
+    this.stylusHandwritingEnabled =
+        EditableText.defaultStylusHandwritingEnabled,
     this.enableIMEPersonalizedLearning = true,
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.canRequestFocus = true,
@@ -219,7 +220,8 @@ class WrapperTextField extends StatelessWidget {
     this.contentInsertionConfiguration,
     this.clipBehavior = Clip.hardEdge,
     this.restorationId,
-    this.scribbleEnabled = false,
+    this.stylusHandwritingEnabled =
+        EditableText.defaultStylusHandwritingEnabled,
     this.enableIMEPersonalizedLearning = true,
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.canRequestFocus = true,
@@ -302,7 +304,8 @@ class WrapperTextField extends StatelessWidget {
     this.contentInsertionConfiguration,
     this.clipBehavior = Clip.hardEdge,
     this.restorationId,
-    this.scribbleEnabled = false,
+    this.stylusHandwritingEnabled =
+        EditableText.defaultStylusHandwritingEnabled,
     this.enableIMEPersonalizedLearning = true,
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.canRequestFocus = true,
@@ -475,7 +478,7 @@ class WrapperTextField extends StatelessWidget {
       restorationId: restorationId,
       enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
       contextMenuBuilder: contextMenuBuilder,
-      scribbleEnabled: scribbleEnabled,
+      stylusHandwritingEnabled: stylusHandwritingEnabled,
       canRequestFocus: canRequestFocus,
       spellCheckConfiguration: spellCheckConfiguration,
       magnifierConfiguration: magnifierConfiguration,

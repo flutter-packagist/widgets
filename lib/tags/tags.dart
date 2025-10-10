@@ -93,17 +93,17 @@ class _WrapperTagsState extends State<WrapperTags> {
     return TextButton(
       onPressed: () => widget.onItemTap?.call(index),
       style: ButtonStyle(
-        padding: MaterialStateProperty.all(widget.itemPadding),
-        backgroundColor: MaterialStateProperty.all(widget.itemColor),
-        side: MaterialStateProperty.all(widget.itemBorderSide),
-        shape: MaterialStateProperty.all(
+        padding: WidgetStatePropertyAll(widget.itemPadding),
+        backgroundColor: WidgetStatePropertyAll(widget.itemColor),
+        side: WidgetStatePropertyAll(widget.itemBorderSide),
+        shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: widget.itemBorderRadius ?? BorderRadius.zero,
           ),
         ),
         splashFactory: widget.splashFactory,
         tapTargetSize: widget.tapTargetSize ?? MaterialTapTargetSize.shrinkWrap,
-        minimumSize: MaterialStateProperty.all(widget.minimumSize ?? Size.zero),
+        minimumSize: WidgetStatePropertyAll(widget.minimumSize ?? Size.zero),
       ),
       child: Text(
         tagsRenderList[index],

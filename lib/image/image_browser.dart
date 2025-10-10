@@ -661,7 +661,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage>
   }
 
   void calculateLabelPosition(GestureDetails? details) {
-    double scale = details?.totalScale ?? 1;
+    // double scale = details?.totalScale ?? 1;
     Size boundSize = details?.destinationRect?.size ?? Size.zero;
     double imageAspectRatio = _imageSize.aspectRatio;
     double boundAspectRatio = boundSize.width / boundSize.height;

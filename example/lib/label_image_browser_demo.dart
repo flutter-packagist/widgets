@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:packagist_widgets/image/image_browser.dart';
 import 'package:packagist_widgets/widgets.dart';
-
-import 'image_browser.dart';
 
 class LabelImageBrowserDemo extends StatefulWidget {
   const LabelImageBrowserDemo({super.key});

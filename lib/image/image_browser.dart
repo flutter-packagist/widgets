@@ -592,6 +592,10 @@ class _WrapperLabelImageState extends State<WrapperLabelImage>
             inPageView: true,
             initialAlignment: InitialAlignment.center,
             // gestureDetailsIsChanged: calculateLabelPosition,
+            gestureDetailsIsChanged: (GestureDetails? details) {
+              _labelVisible.updateAll((_, __) => details?.totalScale == 1);
+              setState(() {});
+            },
           );
         },
         onDoubleTap: (ExtendedImageGestureState state) {
@@ -657,7 +661,6 @@ class _WrapperLabelImageState extends State<WrapperLabelImage>
   }
 
   void calculateLabelPosition(GestureDetails? details) {
-    print("scale: ${details?.totalScale}  ${details?.destinationRect}");
     double scale = details?.totalScale ?? 1;
     Size boundSize = details?.destinationRect?.size ?? Size.zero;
     double imageAspectRatio = _imageSize.aspectRatio;

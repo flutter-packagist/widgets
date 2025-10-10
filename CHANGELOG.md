@@ -1,3 +1,7 @@
+## 1.4.0
+
+* feat: 图片加载支持文字悬浮标签
+
 ## 1.3.11
 
 * fix: LateInitializationError: Field 'requestUrl' has not been initialized.

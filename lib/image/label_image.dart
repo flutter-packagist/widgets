@@ -141,7 +141,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
         imageInfo.image.height.toDouble(),
       );
       _isLoading = false;
-      setState(() {});
+      if (mounted) setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // Get the bound size
         Size boundSize = context.size ?? Size.zero;
@@ -265,7 +265,8 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
           }
           _loadingImage[label.name] = true;
         }
-        setState(() {});
+        if (mounted) setState(() {});
+        if (!mounted) return;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _timer = Timer(const Duration(milliseconds: 300), onImageTap);
         });
@@ -285,7 +286,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
               _labelAnimations[label.name] == 1 ? 0 : 1;
         }
         _labelDotAnimations[label.name] = 1;
-        setState(() {});
+        if (mounted) setState(() {});
       },
       child: Container(
         width: 18,
@@ -355,7 +356,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
     return GestureDetector(
       onTap: () {
         _labelDotAnimations[label.name] = 0;
-        setState(() {});
+        if (mounted) setState(() {});
       },
       child: topToBottom
           ? Column(children: [dot, line, text])
@@ -374,7 +375,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
               _labelAnimations[label.name] == 1 ? 0 : 1;
         }
         _labelDotAnimations[label.name] = 1;
-        setState(() {});
+        if (mounted) setState(() {});
       },
       child: Container(
         width: 18,
@@ -445,7 +446,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
     return GestureDetector(
       onTap: () {
         _labelDotAnimations[label.name] = 0;
-        setState(() {});
+        if (mounted) setState(() {});
       },
       child: leftToRight
           ? Row(children: [dot, line, text])
@@ -549,7 +550,8 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
     for (var label in widget.labels) {
       _labelDotAnimations[label.name] = 0;
     }
-    setState(() {});
+    if (mounted) setState(() {});
+    if (!mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _timer = Timer(const Duration(milliseconds: 200), () {
         bool allZero = _labelAnimations.values.every((e) => e == 0);
@@ -557,7 +559,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
           _labelDotAnimations[label.name] = 1;
           _labelAnimations[label.name] = allZero ? 1 : 0;
         }
-        setState(() {});
+        if (mounted) setState(() {});
         _timer = Timer(const Duration(milliseconds: 300), () {
           _imageTap = false;
         });

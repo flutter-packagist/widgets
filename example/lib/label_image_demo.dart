@@ -69,6 +69,7 @@ class _LabelImageDemoState extends State<LabelImageDemo> {
           labels: images[i].labels,
           labelDirection: i == 1 ? Axis.horizontal : Axis.vertical,
           labelBorder: Border.all(color: Colors.white, width: 1.5),
+          showLabel: false,
         ),
         const SizedBox(height: 20),
         WrapperLabelImage(

@@ -38,6 +38,7 @@ class WrapperLabelImage extends StatefulWidget {
   final int? maxWidthDiskCache;
   final int? maxHeightDiskCache;
   final bool usePlaceholder;
+  final bool showLabel;
 
   const WrapperLabelImage({
     super.key,
@@ -75,6 +76,7 @@ class WrapperLabelImage extends StatefulWidget {
     this.maxWidthDiskCache,
     this.maxHeightDiskCache,
     this.usePlaceholder = true,
+    this.showLabel = true,
   });
 
   @override
@@ -281,7 +283,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
       duration: const Duration(milliseconds: 100),
       onEnd: () {
         if (_imageTap) return;
-        if (_labelDotAnimations[label.name] == 1) {
+        if (widget.showLabel && _labelDotAnimations[label.name] == 1) {
           _labelAnimations[label.name] =
               _labelAnimations[label.name] == 1 ? 0 : 1;
         }
@@ -374,7 +376,7 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
       duration: const Duration(milliseconds: 100),
       onEnd: () {
         if (_imageTap) return;
-        if (_labelDotAnimations[label.name] == 1) {
+        if (widget.showLabel && _labelDotAnimations[label.name] == 1) {
           _labelAnimations[label.name] =
               _labelAnimations[label.name] == 1 ? 0 : 1;
         }
@@ -565,7 +567,9 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
         bool allZero = _labelAnimations.values.every((e) => e == 0);
         for (var label in widget.labels) {
           _labelDotAnimations[label.name] = 1;
-          _labelAnimations[label.name] = allZero ? 1 : 0;
+          if (widget.showLabel) {
+            _labelAnimations[label.name] = allZero ? 1 : 0;
+          }
         }
         if (mounted) setState(() {});
         _timer = Timer(const Duration(milliseconds: 300), () {

@@ -385,7 +385,9 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
         width: 18,
         height: 18,
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.4),
+          color: Colors.black.withValues(
+            alpha: _labelAnimations[label.name] == 0 ? 0.18 : 0.4,
+          ),
           borderRadius: BorderRadius.circular(10),
         ),
         padding: const EdgeInsets.all(5),
@@ -393,7 +395,9 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
           width: 8,
           height: 8,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.white.withValues(
+              alpha: _labelAnimations[label.name] == 0 ? 0.42 : 1,
+            ),
             borderRadius: BorderRadius.circular(4),
           ),
         ),

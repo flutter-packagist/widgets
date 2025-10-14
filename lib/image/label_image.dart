@@ -39,6 +39,7 @@ class WrapperLabelImage extends StatefulWidget {
   final int? maxHeightDiskCache;
   final bool usePlaceholder;
   final bool showLabel;
+  final bool ignorePointer;
 
   const WrapperLabelImage({
     super.key,
@@ -77,6 +78,7 @@ class WrapperLabelImage extends StatefulWidget {
     this.maxHeightDiskCache,
     this.usePlaceholder = true,
     this.showLabel = true,
+    this.ignorePointer = false,
   });
 
   @override
@@ -109,6 +111,8 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
   @override
   void didUpdateWidget(covariant WrapperLabelImage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    print(
+        "${widget.imageUrl != oldWidget.imageUrl} ${widget.labels != oldWidget.labels} ${widget.width != oldWidget.width} ${widget.height != oldWidget.height}");
     if (widget.imageUrl != oldWidget.imageUrl ||
         widget.labels != oldWidget.labels ||
         widget.width != oldWidget.width ||
@@ -359,15 +363,21 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
       child: const SizedBox(),
     );
 
-    return GestureDetector(
-      onTap: () {
-        _labelDotAnimations[label.name] = 0;
-        if (mounted) setState(() {});
-      },
-      child: topToBottom
-          ? Column(children: [dot, line, text])
-          : Column(children: [placeholder, text, dot, line]),
-    );
+    Widget child = topToBottom
+        ? Column(children: [dot, line, text])
+        : Column(children: [placeholder, text, dot, line]);
+
+    if (!widget.ignorePointer) {
+      child = GestureDetector(
+        onTap: () {
+          _labelDotAnimations[label.name] = 0;
+          if (mounted) setState(() {});
+        },
+        child: child,
+      );
+    }
+
+    return child;
   }
 
   Widget labelHorizontalWidget(LabelItem label, bool leftToRight) {
@@ -453,15 +463,21 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
       child: const SizedBox(),
     );
 
-    return GestureDetector(
-      onTap: () {
-        _labelDotAnimations[label.name] = 0;
-        if (mounted) setState(() {});
-      },
-      child: leftToRight
-          ? Row(children: [dot, line, text])
-          : Row(children: [placeholder, text, dot, line]),
-    );
+    Widget child = leftToRight
+        ? Row(children: [dot, line, text])
+        : Row(children: [placeholder, text, dot, line]);
+
+    if (!widget.ignorePointer) {
+      child = GestureDetector(
+        onTap: () {
+          _labelDotAnimations[label.name] = 0;
+          if (mounted) setState(() {});
+        },
+        child: child,
+      );
+    }
+
+    return child;
   }
 
   @override
@@ -497,39 +513,44 @@ class _WrapperLabelImageState extends State<WrapperLabelImage> {
         ));
       }
     }
-    return GestureDetector(
-      onTap: onImageTap,
-      child: Stack(children: [
-        CachedNetworkImage(
-          imageUrl: widget.imageUrl,
-          httpHeaders: widget.httpHeaders,
-          placeholder: widget.placeholder,
-          progressIndicatorBuilder: widget.progressIndicatorBuilder,
-          errorWidget: widget.errorWidget,
-          fadeOutDuration: widget.fadeOutDuration,
-          fadeOutCurve: widget.fadeOutCurve,
-          fadeInDuration: widget.fadeInDuration,
-          fadeInCurve: widget.fadeInCurve,
-          width: widget.width,
-          height: widget.height,
-          fit: widget.fit,
-          alignment: widget.alignment,
-          repeat: widget.repeat,
-          matchTextDirection: widget.matchTextDirection,
-          useOldImageOnUrlChange: widget.useOldImageOnUrlChange,
-          color: widget.color,
-          filterQuality: widget.filterQuality,
-          colorBlendMode: widget.colorBlendMode,
-          placeholderFadeInDuration: widget.placeholderFadeInDuration,
-          memCacheWidth: widget.memCacheWidth,
-          memCacheHeight: widget.memCacheHeight,
-          cacheKey: widget.cacheKey,
-          maxWidthDiskCache: widget.maxWidthDiskCache,
-          maxHeightDiskCache: widget.maxHeightDiskCache,
-        ),
-        ...labelWidgets,
-      ]),
-    );
+
+    Widget child = Stack(children: [
+      CachedNetworkImage(
+        imageUrl: widget.imageUrl,
+        httpHeaders: widget.httpHeaders,
+        placeholder: widget.placeholder,
+        progressIndicatorBuilder: widget.progressIndicatorBuilder,
+        errorWidget: widget.errorWidget,
+        fadeOutDuration: widget.fadeOutDuration,
+        fadeOutCurve: widget.fadeOutCurve,
+        fadeInDuration: widget.fadeInDuration,
+        fadeInCurve: widget.fadeInCurve,
+        width: widget.width,
+        height: widget.height,
+        fit: widget.fit,
+        alignment: widget.alignment,
+        repeat: widget.repeat,
+        matchTextDirection: widget.matchTextDirection,
+        useOldImageOnUrlChange: widget.useOldImageOnUrlChange,
+        color: widget.color,
+        filterQuality: widget.filterQuality,
+        colorBlendMode: widget.colorBlendMode,
+        placeholderFadeInDuration: widget.placeholderFadeInDuration,
+        memCacheWidth: widget.memCacheWidth,
+        memCacheHeight: widget.memCacheHeight,
+        cacheKey: widget.cacheKey,
+        maxWidthDiskCache: widget.maxWidthDiskCache,
+        maxHeightDiskCache: widget.maxHeightDiskCache,
+      ),
+      ...labelWidgets,
+    ]);
+    if (!widget.ignorePointer) {
+      child = GestureDetector(
+        onTap: onImageTap,
+        child: child,
+      );
+    }
+    return child;
   }
 
   Size calculateTextSize(

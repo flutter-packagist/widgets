@@ -138,6 +138,7 @@ class WrapperTextButton extends StatelessWidget {
       TextScaler textScaler = MediaQuery.of(context).textScaler;
       String scaleText = textScaler.toString();
       double scaleFactor = scaleText.getScaleFactor;
+      if (scaleFactor == 0) scaleFactor = 1;
       EdgeInsetsGeometry padding = scaledPadding(context);
       // 如果文本高度大于按钮设定的高度，向上偏移文本
       if (height != null && textHeight > height!) {
